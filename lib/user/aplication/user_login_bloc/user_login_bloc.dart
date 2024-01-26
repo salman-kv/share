@@ -10,16 +10,16 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
   UserLoginBloc() : super(UserLoginIntialState()) {
     on<UserAlredyLoginEvent>((event, emit) {
       userCredential = event.userCredential;
-      userId=event.userId;
+      userId = event.userId;
     });
-    on<UserLoginLoadingEvent>((event, emit) async{
+    on<UserLoginLoadingEvent>((event, emit) async {
       emit(UserLoginLoadingState());
-      final userResult=await UserFunction().userLoginPasswordAndEmailChecking(event.email, event.password);
-      if(userResult != false){
-        userId=userResult;
+      final userResult = await UserFunction()
+          .userLoginPasswordAndEmailChecking(event.email, event.password);
+      if (userResult != false) {
+        userId = userResult;
         emit(UserLoginSuccessState());
-      }
-      else{
+      } else {
         emit(UserLoginIntialState());
       }
     });

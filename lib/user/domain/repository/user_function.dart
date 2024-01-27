@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:share/user/domain/const/bd_cosnt.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/model/user_model.dart';
+import 'package:share/user/presentation/widgets/commen_widget.dart';
 
 class UserFunction {
   addUserDeatails(UserModel userModel, String compire) async {
@@ -40,8 +41,11 @@ class UserFunction {
   }
 
   checkUserIsAlredyTheirOrNot(String email, String compare) async {
+    print('##########################');
     final instant = FirebaseFirestore.instance.collection(DbConst().userDb);
+    print('##########################22222222222222');
     final val = await instant.where(compare, isEqualTo: email).get();
+    print('##########################333333333333');
     if (val.docs.isNotEmpty) {
       return val.docs.first.id;
     } else {
@@ -50,20 +54,25 @@ class UserFunction {
   }
 
   userLoginPasswordAndEmailChecking(String email, String password) async {
-    final instant = FirebaseFirestore.instance.collection(DbConst().userDb);
-    final val = await instant
-        .where(FirebaseFirestoreConst().firebaseFireStoreEmail,
-            isEqualTo: email)
-        .get();
-    if (val.docs.isNotEmpty) {
-      if (val.docs.first[FirebaseFirestoreConst().firebaseFireStorePassword] ==
-          password) {
-        return val.docs.first.id;
+    try {
+      final instant = FirebaseFirestore.instance.collection(DbConst().userDb);
+      final val = await instant
+          .where(FirebaseFirestoreConst().firebaseFireStoreEmail,
+              isEqualTo: email)
+          .get();
+      if (val.docs.isNotEmpty) {
+        if (val.docs
+                .first[FirebaseFirestoreConst().firebaseFireStorePassword] ==
+            password) {
+          return val.docs.first.id;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
-    } else {
-      return false;
+    } catch (e) {
+      CommonWidget().toastWidget('$e');
     }
   }
 }

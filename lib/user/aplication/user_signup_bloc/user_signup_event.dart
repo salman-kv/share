@@ -15,3 +15,14 @@ class OnVarifyUserDetailsEvent extends UserSignUpEvent{
 
   OnVarifyUserDetailsEvent({required this.userModel, required this.compire});
 }
+
+class ManualEmailCheckingEvent extends UserSignUpEvent{
+  final String email;
+
+  ManualEmailCheckingEvent({required this.email});
+}
+class ManualOtpCheckingEvent extends UserSignUpEvent{
+  final String otp;
+
+  ManualOtpCheckingEvent({required this.otp});
+}

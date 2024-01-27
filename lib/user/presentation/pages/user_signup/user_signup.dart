@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
+import 'package:share/user/aplication/user_signup_bloc/user_signup_event.dart';
+import 'package:share/user/aplication/user_signup_bloc/user_signup_state.dart';
+import 'package:share/user/presentation/pages/user_signup/user_signup_otp.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 
 class UserSignUp extends StatelessWidget {
-  const UserSignUp({super.key});
+   UserSignUp({super.key});
+
+  TextEditingController emailController=TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +72,7 @@ class UserSignUp extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                     child: TextFormField(
+                      controller: emailController,
                       decoration: Styles().formDecrationStyle(
                           icon: const Icon(Icons.mail_outline_rounded),
                           labelText: 'Email'),
@@ -86,37 +94,49 @@ class UserSignUp extends StatelessWidget {
                 //     ),
                 //   ),
                 // ),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: true,
-                      onChanged: (value) {
-                        value!;
-                      },
-                    ),
-                    Expanded(
-                      child: Text(
-                        'By continuing you accept our Privacy policy and terms of use',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(color: Colors.grey),
-                      ),
-                    )
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     Checkbox(
+                //       value: true,
+                //       onChanged: (value) {
+                //         value!;
+                //       },
+                //     ),
+                //     Expanded(
+                //       child: Text(
+                //         'By continuing you accept our Privacy policy and terms of use',
+                //         style: Theme.of(context)
+                //             .textTheme
+                //             .displaySmall!
+                //             .copyWith(color: Colors.grey),
+                //       ),
+                //     )
+                //   ],
+                // ),
                  SizedBox(height: MediaQuery.of(context).size.height >786 ? MediaQuery.of(context).size.height*0.63 : MediaQuery.of(context).size.height*.45 ,),
-                Container(
-                  height: MediaQuery.of(context).size.width * 0.1,
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  decoration: Styles().elevatedButtonDecration(),
-                  child: ElevatedButton(
-                      style: Styles().elevatedButtonStyle(),
-                      onPressed: () {},
-                      child: Text(
-                        'Register',
-                        style: Styles().elevatedButtonTextStyle(),
-                      )),
+                BlocConsumer<UserSignUpBloc,UserSignUpState>(
+                  builder: (context, state) {
+                    return  Container(
+                    height: MediaQuery.of(context).size.width * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    decoration: Styles().elevatedButtonDecration(),
+                    child: ElevatedButton(
+                        style: Styles().elevatedButtonStyle(),
+                        onPressed: () {
+                          BlocProvider.of<UserSignUpBloc>(context).add(ManualEmailCheckingEvent(email: emailController.text));
+                        },
+                        child: state is ManualEmailCheckingLoadingState ? const CircularProgressIndicator() :  Text(
+                          'verify',
+                          style: Styles().elevatedButtonTextStyle(),
+                        )),
+                  );
+                  },listener: (context, state) {
+                    if(state is ManualEmailCheckingSuccessState){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
+                        return  UserSignUpOtp();
+                      }));
+                    }
+                  },
                 ),
               ],
             ))

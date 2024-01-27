@@ -7,6 +7,7 @@ import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_event.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_state.dart';
 import 'package:share/user/presentation/pages/user_pages/user_home.dart';
+import 'package:share/user/presentation/pages/user_signup/user_signup.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup_more.dart';
 import 'package:share/user/presentation/widgets/buttons.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
@@ -165,15 +166,22 @@ class UserLogin extends StatelessWidget {
                             ],
                           ),
                   ),
-                  RichText(
-                      text: TextSpan(children: [
-                    TextSpan(
-                        text: "Don't have an account yet?",
-                        style: Theme.of(context).textTheme.displaySmall),
-                    TextSpan(
-                        text: ' Register',
-                        style: Styles().linkTextColorStyle(context))
-                  ]))
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
+                        return UserSignUp();
+                      }));
+                    },
+                    child: RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: "Don't have an account yet?",
+                          style: Theme.of(context).textTheme.displaySmall),
+                      TextSpan(
+                          text: ' Register',
+                          style: Styles().linkTextColorStyle(context))
+                    ])),
+                  )
                 ],
               );
             },

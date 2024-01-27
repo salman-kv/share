@@ -24,8 +24,6 @@ class UserSignUpMoreInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    nameController.text =
-        context.read<UserSignUpBloc>().userCredential!.user?.displayName ?? '';
     return SafeArea(
         child: Scaffold(
       body: SingleChildScrollView(
@@ -179,8 +177,6 @@ class UserSignUpMoreInfo extends StatelessWidget {
                                       userModel: UserModel(
                                           email: context
                                               .read<UserSignUpBloc>()
-                                              .userCredential!
-                                              .user!
                                               .email!,
                                           name: nameController.text,
                                           password: passwordController.text,

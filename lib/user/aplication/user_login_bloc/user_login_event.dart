@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 abstract class UserLoginEvent{}
 
 class UserAlredyLoginEvent extends UserLoginEvent{
-  final UserCredential userCredential;
+  final String userCredential;
   final String userId;
   UserAlredyLoginEvent( {required this.userId,required this.userCredential});
 }

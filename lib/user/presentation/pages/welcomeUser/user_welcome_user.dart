@@ -18,7 +18,7 @@ class WelcomeUser extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  DesignedText().welcomeShareText(),
+                  DesignedText().welcomeShareText(context),
                   Text(
                     'Find Your safe stay',
                     style: Theme.of(context).textTheme.bodySmall,
@@ -26,7 +26,6 @@ class WelcomeUser extends StatelessWidget {
                 ],
               ),
             ),
-            // CustomButton().customSubmitButton(context, 'Get Start'),
             Container(
               height: MediaQuery.of(context).size.width * 0.1,
               width: MediaQuery.of(context).size.width * 0.6,

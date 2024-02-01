@@ -9,7 +9,7 @@ import 'package:share/user/aplication/user_signup_bloc/user_signup_state.dart';
 import 'package:share/user/presentation/pages/user_pages/user_home.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup_more.dart';
-import 'package:share/user/presentation/widgets/buttons.dart';
+import 'package:share/user/presentation/widgets/commen_widget.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 
 class UserLogin extends StatelessWidget {
@@ -54,11 +54,12 @@ class UserLogin extends StatelessWidget {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(20)),
                             child: TextFormField(
+
                               controller: emailController,
                               decoration: Styles().formDecrationStyle(
                                   icon: const Icon(Icons.mail_outlined),
                                   labelText: 'Email'),
-                              style: Styles().formTextStyle(),
+                              style: Styles().formTextStyle(context),
                             ),
                           ),
                         ),
@@ -74,17 +75,17 @@ class UserLogin extends StatelessWidget {
                               decoration: Styles().formDecrationStyle(
                                   icon: const Icon(Icons.lock_outline_rounded),
                                   labelText: 'Password'),
-                              style: Styles().formTextStyle(),
+                              style: Styles().formTextStyle(context),
                             ),
                           ),
                         ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Forgot password?',
-                            style: Styles().passwordTextStyle(),
-                          ),
-                        ),
+                        // TextButton(
+                        //   onPressed: () {},
+                        //   child: Text(
+                        //     'Forgot password?',
+                        //     style: Styles().passwordTextStyle(),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -117,10 +118,14 @@ class UserLogin extends StatelessWidget {
                       );
                     },
                     listener: (context, state) {
-                      if(state is UserLoginSuccessState){
-                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (ctx){
+                      if (state is UserLoginSuccessState) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (ctx) {
                           return UserHome();
                         }), (route) => false);
+                      }
+                      if(state is UserLoginErrorState){
+                        CommonWidget().errorSnackBar('Invalid username or password', context);
                       }
                     },
                   ),
@@ -161,14 +166,25 @@ class UserLogin extends StatelessWidget {
                                       .read<UserSignUpBloc>()
                                       .add(OnclickUserSignUpAuthentication());
                                 },
-                                child: CustomButton().loginIconButton(),
+                                child: Container(
+                                  height: 60,
+                                  width: 60,
+                                  decoration:
+                                      Styles().googleAuthButtonDecration(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child:
+                                        Image.asset('assets/images/google.png'),
+                                  ),
+                                ),
                               )
                             ],
                           ),
                   ),
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (ctx) {
                         return UserSignUp();
                       }));
                     },
@@ -190,11 +206,12 @@ class UserLogin extends StatelessWidget {
                 context.read<UserLoginBloc>().add(UserAlredyLoginEvent(
                     userCredential: state.userCredential,
                     userId: state.userId));
-                Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-                  return const UserHome();
-                }));
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (ctx) {
+                  return UserHome();
+                }), (route) => false);
               } else if (state is UserSignupAuthenticationSuccess) {
-                Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+                Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
                   return UserSignUpMoreInfo();
                 }));
               }

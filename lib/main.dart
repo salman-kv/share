@@ -4,18 +4,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/firebase_options.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
-import 'package:share/user/presentation/pages/user_signup/user_signup.dart';
+import 'package:share/user/domain/functions/shared_prefrence.dart';
+import 'package:share/user/presentation/pages/userLogin/user_login_page.dart';
+import 'package:share/user/presentation/pages/user_pages/user_home.dart';
 import 'package:share/user/presentation/pages/welcomeUser/user_welcome_user.dart';
 import 'package:share/user/presentation/theme/user_theme.dart';
 
-void main() {
+void main()async {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MainApp());
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final String? loginStatus=await SharedPreferencesClass.getUserId();
+  runApp( MainApp(loginStatus: loginStatus,));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final String? loginStatus;
+   const MainApp({super.key,required this.loginStatus});
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +40,7 @@ class MainApp extends StatelessWidget {
         theme: UserTheme().lightTheme,
         darkTheme: UserTheme().darkTheme,
         debugShowCheckedModeBanner: false,
-        home: const WelcomeUser(),
-        // home: const UserSignUpMoreInfo(),
+        home:  loginStatus == '' ? UserLogin() : loginStatus != null? UserHome() : const WelcomeUser() ,
       ),
     );
   }

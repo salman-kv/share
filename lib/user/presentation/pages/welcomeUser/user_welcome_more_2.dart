@@ -14,7 +14,7 @@ class WelcomeUserMore2 extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Expanded(
-              flex: 5,
+              flex: 7,
               child: Container(
                 decoration: BoxDecoration(
                     image: const DecorationImage(

@@ -1,3 +1,4 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:share/user/domain/model/user_model.dart';
 
 abstract class UserSignUpEvent{}
@@ -6,7 +7,7 @@ class OnclickUserSignUpAuthentication extends UserSignUpEvent{
 }
 
 class OnAddUserSignUpImage extends UserSignUpEvent{
-  String image;
+  XFile image;
   OnAddUserSignUpImage({required this.image});
 }
 class OnVarifyUserDetailsEvent extends UserSignUpEvent{
@@ -26,3 +27,4 @@ class ManualOtpCheckingEvent extends UserSignUpEvent{
 
   ManualOtpCheckingEvent({required this.otp});
 }
+class OnlyForLoadingevent extends UserSignUpEvent{}

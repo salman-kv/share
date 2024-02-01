@@ -19,8 +19,9 @@ class Styles {
     );
   }
 
-  formTextStyle() {
-    return const TextStyle(
+  formTextStyle(BuildContext context) {
+    return  TextStyle(
+      color:  MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black : Colors.black,
       fontSize: 16,
     );
   }
@@ -43,10 +44,9 @@ class Styles {
 
   linkTextColorStyle(BuildContext context) {
     return Theme.of(context).textTheme.displaySmall!.copyWith(
-      color: ConstValues().mainColorblue,
-      decoration: TextDecoration.underline,
-      fontWeight: FontWeight.bold
-    );
+        color: ConstValues().mainColorblue,
+        decoration: TextDecoration.underline,
+        fontWeight: FontWeight.bold);
   }
 
   // *****************************************************************************************************************************
@@ -100,6 +100,20 @@ class Styles {
       Icons.navigate_next_outlined,
       color: Colors.white,
       size: 30,
+    );
+  }
+
+  // *****************************************************************************************************************************
+
+  // google Auth button style
+
+  // *****************************************************************************************************************************
+
+  googleAuthButtonDecration() {
+    return BoxDecoration(
+      border:
+          Border.all(color: const Color.fromARGB(255, 214, 214, 214), width: 2),
+      borderRadius: BorderRadius.circular(10),
     );
   }
 }

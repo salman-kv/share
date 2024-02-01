@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:share/user/presentation/pages/welcomeUser/user_welcome_more_2.dart';
-import 'package:share/user/presentation/widgets/buttons.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 
 class WelcomeUserMore extends StatelessWidget {

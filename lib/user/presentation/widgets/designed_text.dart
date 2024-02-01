@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:share/user/presentation/const/const_color.dart';
 
 class DesignedText {
-  welcomeShareText() {
+  welcomeShareText(BuildContext context) {
     return Column(
       children: [
         RichText(
@@ -15,10 +15,10 @@ class DesignedText {
                 fontWeight: FontWeight.w700,
                 fontFamily: 'PoppIns'
               )),
-          TextSpan(
+           TextSpan(
               text: 'hare',
               style: TextStyle(
-                color: ConstValues().blackLetter,
+                color: MediaQuery.of(context).platformBrightness == Brightness.dark ?  Colors.white : Colors.black,
                 fontSize:50,
                 fontWeight: FontWeight.w600,
                 fontFamily: 'poppins'

@@ -1,10 +1,12 @@
+import 'package:image_picker/image_picker.dart';
+
 abstract class UserSignUpState{}
 
 class InitialUserSignUp extends UserSignUpState{}
 class UserSignupLoading extends UserSignUpState{}
 class UserSignupAuthenticationSuccess extends UserSignUpState{}
 class UserSignupImagePickSuccess extends UserSignUpState{
-  final String image;
+  final XFile image;
   UserSignupImagePickSuccess({required this.image});
 }
 class UserAlredySignupState extends UserSignUpState{
@@ -24,9 +26,7 @@ class ManualEmailCheckingSuccessState extends UserSignUpState{
 
   ManualEmailCheckingSuccessState({required this.email});
 }
-class ManualOtpCheckingSuccessState extends UserSignUpState{
-  // final String email;
-
-  // ManualOtpCheckingSuccessState({required this.email});
-
-}
+class ManualOtpCheckingSuccessState extends UserSignUpState{}
+class UserSignupErrorState extends UserSignUpState{}
+class UserOtpVerifyErrorState extends UserSignUpState{}
+class UserAlreadySignupErrorState extends UserSignUpState{}

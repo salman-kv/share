@@ -8,23 +8,23 @@ class UserTheme {
       // large text like big heading
       bodyLarge: GoogleFonts.poppins(
         fontWeight: FontWeight.bold,
-        fontSize: 24,
+        fontSize: 22,
       ),
       // small grey fonts
       bodySmall: GoogleFonts.poppins(
         fontWeight: FontWeight.normal,
         color: Colors.grey,
-        fontSize: 16,
+        fontSize: 14,
       ),
       // normal letters meadium
       displayMedium: GoogleFonts.poppins(
         fontWeight: FontWeight.normal,
-        fontSize: 16,
+        fontSize: 14,
       ),
       // normal letters small
       displaySmall: GoogleFonts.poppins(
         fontWeight: FontWeight.normal,
-        fontSize: 14,
+        fontSize: 12,
       ),
     ),
   );
@@ -34,12 +34,22 @@ class UserTheme {
        textTheme: TextTheme(
       bodyLarge: GoogleFonts.poppins(
         fontWeight: FontWeight.bold,
-        fontSize: 24,
+        fontSize: 22,
       ),
       bodySmall: GoogleFonts.poppins(
         fontWeight: FontWeight.normal,
         color: Colors.grey,
-        fontSize: 16,
+        fontSize: 14,
+      ),
+       // normal letters meadium
+      displayMedium: GoogleFonts.poppins(
+        fontWeight: FontWeight.normal,
+        fontSize: 14,
+      ),
+      // normal letters small
+      displaySmall: GoogleFonts.poppins(
+        fontWeight: FontWeight.normal,
+        fontSize: 12,
       ),
     ),
   );

@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_event.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_state.dart';
-import 'package:share/user/presentation/pages/userLogin/user_login_page.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup_more.dart';
+import 'package:share/user/presentation/widgets/commen_widget.dart';
 
 import 'package:share/user/presentation/widgets/styles.dart';
 
@@ -45,7 +45,7 @@ class UserSignUpOtp extends StatelessWidget {
                                 decoration: Styles().formDecrationStyle(
                                     icon: const Icon(Icons.mail_outlined),
                                     labelText: 'otp'),
-                                style: Styles().formTextStyle(),
+                                style: Styles().formTextStyle(context),
                               ),
                             ),
                           ),
@@ -66,10 +66,6 @@ class UserSignUpOtp extends StatelessWidget {
                                       style: Styles().elevatedButtonTextStyle(),
                                     )),
                               ),
-                              // Text(
-                              //   'resent OTP',
-                              //   style: Styles().linkTextColorStyle(context),
-                              // )
                             ],
                           ),
                         ],
@@ -77,11 +73,12 @@ class UserSignUpOtp extends StatelessWidget {
                     },
                     listener: (context, state) {
                       if(state is ManualOtpCheckingSuccessState ){
-                        print('++++++++++++++++++++++++++++');
-                        print(BlocProvider.of<UserSignUpBloc>(context).email);
                         Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
                           return UserSignUpMoreInfo();
                         }));
+                      }
+                      else if(state is UserOtpVerifyErrorState){
+                        CommonWidget().errorSnackBar('Invalid OTP', context);
                       }
                     },
                   ),

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 abstract class UserLoginEvent{}
 
 class UserAlredyLoginEvent extends UserLoginEvent{
@@ -17,4 +19,13 @@ class UserLoginLoadingEvent extends UserLoginEvent{
 class UserLoginSuccessEvent extends UserLoginEvent{
   final String userId;
   UserLoginSuccessEvent({required this.userId});
+}
+
+class UserDeatailesAddingEvent extends UserLoginEvent{
+  final String userId;
+  final BuildContext context;
+
+  UserDeatailesAddingEvent({required this.userId, required this.context});
+
+  
 }

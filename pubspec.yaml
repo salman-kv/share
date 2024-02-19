@@ -49,6 +49,15 @@ dependencies:
   shared_preferences: ^2.2.2
   email_auth: ^1.1.1
   email_otp: ^2.1.2
+  lottie: ^3.0.0
+  motion_tab_bar_v2: ^0.3.0
+  flashy_tab_bar2: ^0.0.6
+  font_awesome_flutter: ^10.7.0
+  geolocator: ^11.0.0
+  geocoding: ^2.1.1
+  flutter_map_math:
+  http: ^1.2.0
+  google_maps_flutter: ^2.5.3
 
 dev_dependencies:
   flutter_test:

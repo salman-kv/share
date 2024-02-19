@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_event.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_state.dart';
+import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup_more.dart';
-import 'package:share/user/presentation/widgets/commen_widget.dart';
 
 import 'package:share/user/presentation/widgets/styles.dart';
 
@@ -78,7 +78,7 @@ class UserSignUpOtp extends StatelessWidget {
                         }));
                       }
                       else if(state is UserOtpVerifyErrorState){
-                        CommonWidget().errorSnackBar('Invalid OTP', context);
+                        SnackBars().errorSnackBar('Invalid OTP', context);
                       }
                     },
                   ),

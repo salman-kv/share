@@ -6,8 +6,8 @@ import 'package:share/user/aplication/user_signup_bloc/user_signup_event.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_state.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/functions/shared_prefrence.dart';
-import 'package:share/user/domain/functions/user_function.dart';
-import 'package:share/user/presentation/widgets/commen_widget.dart';
+import 'package:share/user/domain/functions/user_firestroe_funciton.dart';
+import 'package:share/user/presentation/alerts/toasts.dart';
 
 class UserSignUpBloc extends Bloc<UserSignUpEvent, UserSignUpState> {
   // UserCredential? userCredential;
@@ -20,18 +20,12 @@ class UserSignUpBloc extends Bloc<UserSignUpEvent, UserSignUpState> {
       (event, emit) async {
         try {
           emit(UserSignupLoading());
-          print('++___________++++++++++++___________________');
-          final authResult = await UserFunction().signInWithGoogle();
-          print('+++++++++++++++++');
-          print(authResult);
+          final authResult = await UserFireStroreFunction().signInWithGoogle();
           if (authResult != null) {
-            log('????????????????????????????????????????');
             email = authResult!.user!.email!;
-            final userReturnId = await UserFunction()
+            final userReturnId = await UserFireStroreFunction()
                 .checkUserIsAlredyTheirOrNot(
                     email!, FirebaseFirestoreConst.firebaseFireStoreEmail);
-                    log('//////////////////////////////////////');
-                    log('$userReturnId');
             if (userReturnId != false) {
               userid = userReturnId;
               SharedPreferencesClass.setUserid(userid!);
@@ -47,18 +41,16 @@ class UserSignUpBloc extends Bloc<UserSignUpEvent, UserSignUpState> {
           }
         } catch (e) {
           emit(InitialUserSignUp());
-          CommonWidget().toastWidget('$e');
+          Toasts().toastWidget('$e');
           log('$e');
         }
       },
     );
     on<OnVarifyUserDetailsEvent>((event, emit) async {
       emit(UserSignupLoading());
-      print('{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{object}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}');
       final userResult =
-          await UserFunction().addUserDeatails(event.userModel, event.compire);
+          await UserFireStroreFunction().addUserDeatails(event.userModel, event.compire);
       userid = userResult;
-      print(']]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]');
       SharedPreferencesClass.setUserid(userid!);
       SharedPreferencesClass.setUserEmail(email!);
         image=null;
@@ -80,7 +72,7 @@ class UserSignUpBloc extends Bloc<UserSignUpEvent, UserSignUpState> {
           userEmail: event.email,
           otpLength: 4,
           otpType: OTPType.digitsOnly);
-      final userReturnId = await UserFunction().checkUserIsAlredyTheirOrNot(
+      final userReturnId = await UserFireStroreFunction().checkUserIsAlredyTheirOrNot(
           event.email, FirebaseFirestoreConst.firebaseFireStoreEmail);
       if (userReturnId == false) {
         var val = await myAuth.sendOTP();

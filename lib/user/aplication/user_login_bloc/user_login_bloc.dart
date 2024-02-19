@@ -1,35 +1,58 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_event.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_state.dart';
+import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/functions/shared_prefrence.dart';
-import 'package:share/user/domain/functions/user_function.dart';
-import 'package:share/user/presentation/widgets/commen_widget.dart';
+import 'package:share/user/domain/functions/user_firestroe_funciton.dart';
+import 'package:share/user/domain/model/user_model.dart';
+import 'package:share/user/presentation/alerts/toasts.dart';
 
 class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
-  String? userCredential;
+  // String? userCredential;
   String? userId;
+  UserModel? userModel;
   UserLoginBloc() : super(UserLoginIntialState()) {
     on<UserAlredyLoginEvent>((event, emit) {
-      userCredential = event.userCredential;
       userId = event.userId;
       SharedPreferencesClass.setUserid(event.userId);
       SharedPreferencesClass.setUserEmail(event.userCredential);
+      log('emit user seatatl adding state');
+      emit(UserDeatailedAddigPendingState());
+    });
+    on<UserDeatailesAddingEvent>((event, emit)async{
+      emit(UserLoginLoadingState());
+      userId=event.userId;
+      final instant=await FirebaseFirestore.instance.collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection).doc(userId).get();
+      Map<String,dynamic> data=instant.data() as Map<String,dynamic>;
+      userModel=UserModel.fromMap(data,event.userId);
+    //  LatLng position= await UserFireStroreFunction().getCurrentLocation(event.context);
+    //  Placemark placemark= await UserFireStroreFunction().getPlaceMakerDeatails(latLng: position, context: event.context);
+    //  await UserFireStroreFunction().getRoomDataFromFireStoreAndStore(context: event.context);
+      log('loginSuccess');
+      emit(UserLoginSuccessState());
     });
     on<UserLoginLoadingEvent>((event, emit) async {
       emit(UserLoginLoadingState());
       try {
-        final userResult = await UserFunction()
+        final userResult = await UserFireStroreFunction()
             .userLoginPasswordAndEmailChecking(event.email, event.password);
         if (userResult != false) {
           userId = userResult;
           SharedPreferencesClass.setUserid(userId!);
           SharedPreferencesClass.setUserEmail(event.email);
-          emit(UserLoginSuccessState());
+          emit(UserDeatailedAddigPendingState());
         } else {
           emit(UserLoginErrorState());
         }
       } catch (e) {
-        CommonWidget().toastWidget('$e');
+        Toasts().toastWidget('$e');
       }
     });
   }

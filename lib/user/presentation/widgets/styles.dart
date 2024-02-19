@@ -44,7 +44,7 @@ class Styles {
 
   linkTextColorStyle(BuildContext context) {
     return Theme.of(context).textTheme.displaySmall!.copyWith(
-        color: ConstValues().mainColorblue,
+        color: ConstColor().mainColorblue,
         decoration: TextDecoration.underline,
         fontWeight: FontWeight.bold);
   }

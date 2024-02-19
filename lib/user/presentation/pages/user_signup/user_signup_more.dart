@@ -12,10 +12,11 @@ import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_event.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_state.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
+import 'package:share/user/domain/functions/user_firestroe_funciton.dart';
 import 'package:share/user/domain/model/user_model.dart';
 import 'package:share/user/domain/functions/user_function.dart';
+import 'package:share/user/presentation/alerts/toasts.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup_success.dart';
-import 'package:share/user/presentation/widgets/commen_widget.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 
 // ignore: must_be_immutable
@@ -86,46 +87,6 @@ class UserSignUpMoreInfo extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // DropdownButtonHideUnderline(
-                  //   child: DropdownButton2(
-                  //     dropdownStyleData: DropdownStyleData(
-                  //       maxHeight: 300,
-                  //       width: MediaQuery.of(context).size.width * 0.9,
-                  //       decoration: BoxDecoration(
-                  //         borderRadius: BorderRadius.circular(14),
-                  //       ),
-                  //     ),
-                  //     buttonStyleData: ButtonStyleData(
-                  //       height: 55,
-                  //       width: MediaQuery.of(context).size.width * 0.92,
-                  //       padding: const EdgeInsets.only(left: 14, right: 14),
-                  //       decoration: BoxDecoration(
-                  //         borderRadius: BorderRadius.circular(14),
-                  //         color: const Color.fromARGB(255, 242, 242, 242),
-                  //       ),
-                  //     ),
-                  //     onChanged: (value) {},
-                  //     hint: const Row(
-                  //       children: [
-                  //         Icon(Icons.male_outlined),
-                  //         SizedBox(
-                  //           width: 5,
-                  //         ),
-                  //         Text('Gender'),
-                  //       ],
-                  //     ),
-                  //     items: const [
-                  //       DropdownMenuItem(
-                  //         value: 'Male',
-                  //         child: Text('Male'),
-                  //       ),
-                  //       DropdownMenuItem(
-                  //         value: 'Female',
-                  //         child: Text('Female'),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -225,14 +186,14 @@ class UserSignUpMoreInfo extends StatelessWidget {
                                   if (BlocProvider.of<UserSignUpBloc>(context)
                                           .image ==
                                       null) {
-                                    CommonWidget()
+                                    Toasts()
                                         .toastWidget('pls add profile photo');
                                     return;
                                   } else if (formKey.currentState!.validate()) {
                                     log('validate successfull');
                                     BlocProvider.of<UserSignUpBloc>(context)
                                         .add(OnlyForLoadingevent());
-                                    final imageUrl = await UserFunction()
+                                    final imageUrl = await UserFireStroreFunction()
                                         .uploadImageToFirebase(context
                                             .read<UserSignUpBloc>()
                                             .image!);

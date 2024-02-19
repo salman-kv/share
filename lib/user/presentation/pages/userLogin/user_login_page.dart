@@ -6,10 +6,12 @@ import 'package:share/user/aplication/user_login_bloc/user_login_state.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_event.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_state.dart';
+import 'package:share/user/presentation/alerts/snack_bars.dart';
+import 'package:share/user/presentation/pages/main_page.dart';
 import 'package:share/user/presentation/pages/user_pages/user_home.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup_more.dart';
-import 'package:share/user/presentation/widgets/commen_widget.dart';
+import 'package:share/user/presentation/widgets/common_widget.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 
 class UserLogin extends StatelessWidget {
@@ -79,13 +81,6 @@ class UserLogin extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // TextButton(
-                        //   onPressed: () {},
-                        //   child: Text(
-                        //     'Forgot password?',
-                        //     style: Styles().passwordTextStyle(),
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),
@@ -109,7 +104,7 @@ class UserLogin extends StatelessWidget {
                               context.read<UserLoginBloc>().add(
                                   UserLoginLoadingEvent(
                                       email: emailController.text.trim(),
-                                      password: passwordController.text));
+                                      password: passwordController.text.trim()));
                             },
                             child: Text(
                               'Login',
@@ -121,11 +116,14 @@ class UserLogin extends StatelessWidget {
                       if (state is UserLoginSuccessState) {
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(builder: (ctx) {
-                          return UserHome();
+                          return MainPage();
                         }), (route) => false);
                       }
-                      if(state is UserLoginErrorState){
-                        CommonWidget().errorSnackBar('Invalid username or password', context);
+                      else if(state is UserLoginErrorState){
+                        SnackBars().errorSnackBar('Invalid username or password', context);
+                      }
+                      else if(state is UserDeatailedAddigPendingState){
+                        BlocProvider.of<UserLoginBloc>(context).add(UserDeatailesAddingEvent(userId: BlocProvider.of<UserLoginBloc>(context).userId!,context: context));
                       }
                     },
                   ),
@@ -208,13 +206,14 @@ class UserLogin extends StatelessWidget {
                     userId: state.userId));
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (ctx) {
-                  return UserHome();
+                  return MainPage();
                 }), (route) => false);
               } else if (state is UserSignupAuthenticationSuccess) {
                 Navigator.of(context).push(MaterialPageRoute(builder: (ctx){
                   return UserSignUpMoreInfo();
                 }));
               }
+              // else if()
             },
           ),
         ),

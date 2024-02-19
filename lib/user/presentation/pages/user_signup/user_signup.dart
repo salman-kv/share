@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_event.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_state.dart';
+import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup_otp.dart';
-import 'package:share/user/presentation/widgets/commen_widget.dart';
+import 'package:share/user/presentation/widgets/common_widget.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 
 class UserSignUp extends StatelessWidget {
@@ -81,10 +82,10 @@ class UserSignUp extends StatelessWidget {
                       }));
                     }
                     else if(state is UserSignupErrorState){
-                      CommonWidget().errorSnackBar('Invalid Email , pls enter a valid email', context);
+                      SnackBars().errorSnackBar('Invalid Email , pls enter a valid email', context);
                     }
                     else if(state is UserAlreadySignupErrorState){
-                      CommonWidget().errorSnackBar('User alredy Logined', context);
+                      SnackBars().errorSnackBar('User alredy Logined', context);
                     }
                   },
                 ),

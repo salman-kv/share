@@ -10,7 +10,7 @@ class DesignedText {
           TextSpan(
               text: 'S',
               style: TextStyle(
-                color: ConstValues().mainColorblue,
+                color: ConstColor().mainColorblue,
                 fontSize: 60,
                 fontWeight: FontWeight.w700,
                 fontFamily: 'PoppIns'

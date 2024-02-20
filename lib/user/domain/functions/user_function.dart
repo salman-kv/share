@@ -1,17 +1,8 @@
 import 'dart:developer';
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
-import 'package:share/user/domain/model/user_model.dart';
-import 'package:share/user/presentation/widgets/common_widget.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class UserFunction {
-  
   // user pick image and send the path of image
 
   userPickImage() async {
@@ -23,5 +14,18 @@ class UserFunction {
     }
   }
 
+  // oposit color selecting function
 
+  opositColor(BuildContext context) {
+    return MediaQuery.of(context).platformBrightness == Brightness.light
+        ? const Color.fromARGB(255, 0, 0, 0)
+        : Colors.white;
+  }
+
+  // almost same as the common color
+  backgroundColorAlmostSame(BuildContext context) {
+    return MediaQuery.of(context).platformBrightness == Brightness.light
+        ? Color.fromARGB(255, 243, 243, 243)
+        : const Color.fromARGB(255, 45, 45, 45);
+  }
 }

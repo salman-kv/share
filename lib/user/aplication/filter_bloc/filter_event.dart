@@ -20,3 +20,7 @@ class FeatureAddingInFilterEvent extends FilterEvent{
 
   FeatureAddingInFilterEvent({required this.val});
 }
+
+// this clas is using when i remove the seach valure from controller 
+// i need to remove the filter value also
+class OnCancelSearchAndFilterRemoveEvent extends FilterEvent{}

@@ -10,9 +10,12 @@ import 'package:share/user/aplication/filter_bloc/filter_state.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_event.dart';
 import 'package:share/user/aplication/search_bloc/search_state.dart';
+import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
+import 'package:share/user/domain/functions/user_function.dart';
 import 'package:share/user/domain/model/room_model.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/const/const_color.dart';
+import 'package:share/user/presentation/pages/user_pages/room_page/room_deatailed_page.dart';
 
 TextEditingController searchController = TextEditingController();
 
@@ -41,7 +44,10 @@ class CommonWidget {
                   if (searchController.text.isNotEmpty) {
                     BlocProvider.of<SearchBloc>(context)
                         .add(OnChangeSearchEvent(text: searchController.text));
-                        BlocProvider.of<SearchBloc>(context).add(OnTapSearchEvent());
+                    BlocProvider.of<SearchBloc>(context)
+                        .add(OnTapSearchEvent());
+                    BlocProvider.of<FilterBloc>(context)
+                        .add(OnCancelSearchAndFilterRemoveEvent());
                   } else {
                     SnackBars()
                         .errorSnackBar('Pleas enter your place', context);
@@ -67,6 +73,9 @@ class CommonWidget {
                 ? [
                     IconButton(
                         onPressed: () {
+                          BlocProvider.of<SearchBloc>(context)
+                              .add(OnCancelSearchEvent());
+
                           searchController.text = '';
                         },
                         icon: const Icon(
@@ -93,44 +102,60 @@ class CommonWidget {
   }
 
   // categorylist for the main page hotel dormetry all
-  List<Map<String, dynamic>> list = [
-    {'name': 'All', 'select': true},
-    {'name': 'Hotel', 'select': false},
-    {'name': 'Dormetiory', 'select': false}
-  ];
+
   categoryList(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: List.generate(
-            list.length,
-            (index) {
-              return Container(
-                height: 40,
-                constraints: const BoxConstraints(minWidth: 100),
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                margin: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(100)),
-                  color: list[index]['select']
-                      ? Colors.black
-                      : ConstColor().mainColorblue.withOpacity(0.3),
-                ),
-                child: Center(
-                    child: Text(
-                  list[index]['name'],
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: list[index]['select']
-                          ? const Color.fromARGB(255, 255, 255, 255)
-                          : Colors.black),
-                )),
-              );
-            },
+    return BlocConsumer<SearchBloc, SearchState>(
+      listener: (context, state) {
+        if (state is CatogoryChangedSearchState) {
+          BlocProvider.of<SearchBloc>(context)
+              .add(OnRoomDeatailsFilteringEvent());
+        }
+      },
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List.generate(
+                BlocProvider.of<SearchBloc>(context).list.length,
+                (index) {
+                  return GestureDetector(
+                    onTap: () {
+                      BlocProvider.of<SearchBloc>(context)
+                          .add(OnTapCatogoryChangeEvent(index: index));
+                    },
+                    child: Container(
+                      height: 40,
+                      constraints: const BoxConstraints(minWidth: 100),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      margin: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(100)),
+                        color: BlocProvider.of<SearchBloc>(context).list[index]
+                                ['select']
+                            ? Colors.black
+                            : ConstColor().mainColorblue.withOpacity(0.3),
+                      ),
+                      child: Center(
+                          child: Text(
+                        BlocProvider.of<SearchBloc>(context).list[index]
+                            ['name'],
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                            color: BlocProvider.of<SearchBloc>(context)
+                                    .list[index]['select']
+                                ? const Color.fromARGB(255, 255, 255, 255)
+                                : Colors.black),
+                      )),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -227,9 +252,9 @@ class CommonWidget {
     // tempImages.addAll(propertyModel.image);
     // log('hotel showing pimnem rebuild aaayi');
     return GestureDetector(
-      // onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-      //   return RoomShowingPage(hotelId: hotelId, propertyModel: propertyModel);
-      // })),
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+        return RoomDeatailedShowingPage();
+      })),
       child: Stack(
         children: [
           Container(
@@ -357,35 +382,76 @@ class CommonWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      child: Row(
-                        children: [
-                          const Icon(FontAwesomeIcons.circleUp),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Price - Low to High',
-                              style: Theme.of(context).textTheme.displayMedium,
+                    GestureDetector(
+                      onTap: () {
+                        BlocProvider.of<SearchBloc>(context).add(OnSortEvent(
+                            text: FirebaseFirestoreConst
+                                .firebasefirestoreLowToHigh));
+                        Navigator.of(context).pop();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(FontAwesomeIcons.circleUp),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'Price - Low to High',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayMedium,
+                                  ),
+                                ),
+                              ],
                             ),
-                          )
-                        ],
+                            context.watch<SearchBloc>().sort ==
+                                    FirebaseFirestoreConst
+                                        .firebasefirestoreLowToHigh
+                                ? roundedContainerForIndication(
+                                    context, ConstColor().mainColorblue)
+                                : const SizedBox()
+                          ],
+                        ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      child: Row(
-                        children: [
-                          const Icon(FontAwesomeIcons.circleDown),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('Price - High to Low',
-                                style:
-                                    Theme.of(context).textTheme.displayMedium),
-                          )
-                        ],
+                    GestureDetector(
+                      onTap: () {
+                        BlocProvider.of<SearchBloc>(context).add(OnSortEvent(
+                            text: FirebaseFirestoreConst
+                                .firebasefirestoreHighToLow));
+                        Navigator.of(context).pop();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(FontAwesomeIcons.circleDown),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text('Price - High to Low',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium),
+                                ),
+                              ],
+                            ),
+                            context.watch<SearchBloc>().sort ==
+                                    FirebaseFirestoreConst
+                                        .firebasefirestoreHighToLow
+                                ? roundedContainerForIndication(
+                                    context, ConstColor().mainColorblue)
+                                : const SizedBox()
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.01)
@@ -393,6 +459,17 @@ class CommonWidget {
                 ),
               ),
             ));
+  }
+
+  // round poit in diffrent color
+
+  roundedContainerForIndication(BuildContext context, Color color) {
+    return Container(
+      height: MediaQuery.of(context).size.width * 0.03,
+      width: MediaQuery.of(context).size.width * 0.03,
+      decoration:
+          BoxDecoration(color: color, borderRadius: BorderRadius.circular(100)),
+    );
   }
 
   // filter bottomsheet
@@ -417,7 +494,6 @@ class CommonWidget {
         builder: (context) => BlocConsumer<FilterBloc, FilterState>(
               listener: (context, state) {
                 if (state is SubmitedFilterStare) {
-                  
                   log('ivde vare varnd');
                   BlocProvider.of<SearchBloc>(context).add(
                       FilterDeatailsAddingEvent(
@@ -425,7 +501,7 @@ class CommonWidget {
                               BlocProvider.of<FilterBloc>(context).rangeValues,
                           features:
                               BlocProvider.of<FilterBloc>(context).features));
-                              
+
                   BlocProvider.of<SearchBloc>(context)
                       .add(OnRoomDeatailsFilteringEvent());
                   Navigator.of(context).pop();
@@ -546,5 +622,190 @@ class CommonWidget {
                 );
               },
             ));
+  }
+
+  // booking container
+
+  bookingContainer({required BuildContext context}) {
+    return Container(
+      margin: EdgeInsets.only(
+          top: MediaQuery.of(context).size.height * .02,
+          bottom: MediaQuery.of(context).size.height * .02),
+      constraints: const BoxConstraints(minHeight: 100),
+      decoration: BoxDecoration(
+          color: UserFunction().backgroundColorAlmostSame(context),
+          borderRadius: BorderRadius.circular(10),
+          border:
+              Border.all(color: UserFunction().opositColor(context), width: 2)),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_month,
+                      size: 30,
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      'Dates',
+                      style: Theme.of(context).textTheme.displayMedium,
+                    )
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () {
+                    dateSelectingBottomSheet(context: context);
+                  },
+                  child: const Expanded(
+                      child: Text(
+                    'Selected date',
+                    textAlign: TextAlign.end,
+                  )),
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.bed,
+                      size: 30,
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      'Selected Room',
+                      style: Theme.of(context).textTheme.displayMedium,
+                    )
+                  ],
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.1),
+                    height: MediaQuery.of(context).size.height * 0.04,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: UserFunction().opositColor(context),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'A10',
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  // total payment container
+  totalpaymentContainer({required BuildContext context}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Container(
+        constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height * 0.06),
+        decoration: BoxDecoration(
+            color: ConstColor().mainColorblue.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(5)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Total Amount',
+                  style: Theme.of(context).textTheme.titleMedium),
+              Text('₹ 1500', style: Theme.of(context).textTheme.titleLarge)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // pay now button
+
+  payNowButton({required BuildContext context}) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.3,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height * 0.055),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 134, 134, 134)),
+          onPressed: () {},
+          child: Text(
+            'Pay Now',
+            style: Theme.of(context)
+                .textTheme
+                .titleSmall!
+                .copyWith(color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // book and pay at hotel button
+
+  bookAndPayAtHotel({required BuildContext context}) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.6,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height * 0.055),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 12, 85, 6)),
+          onPressed: () {},
+          child: Text(
+            'Book Now & Pay At Hotel',
+            style: Theme.of(context)
+                .textTheme
+                .titleSmall!
+                .copyWith(color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // bottom sheet of date selecting
+
+  dateSelectingBottomSheet({required BuildContext context}) {
+    log('sdfsdf');
+   return CalendarDatePicker(
+    initialDate: DateTime.now(), firstDate: DateTime(2024), lastDate: DateTime(2050), onDateChanged: (value) {
+   },);
+    // return showModalBottomSheet(
+    //   context: context,
+    //   builder: (context) {
+    //     return ListView(
+    //       children: [
+
+    //       ],
+    //     );
+    //   },
+    // );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:share/user/domain/model/room_model.dart';
 
 abstract class SearchEvent{}
 class OnChangeSearchEvent extends SearchEvent{
@@ -9,6 +8,7 @@ class OnChangeSearchEvent extends SearchEvent{
 }
 class OnTapSearchEvent extends SearchEvent{
 }
+class OnCancelSearchEvent extends SearchEvent{}
 class InitialRoomFetchingSearchEvent extends SearchEvent{}
 class FilterDeatailsAddingEvent extends SearchEvent{
   final RangeValues? rangeValues;
@@ -18,3 +18,13 @@ class FilterDeatailsAddingEvent extends SearchEvent{
 }
 
 class OnRoomDeatailsFilteringEvent extends SearchEvent{}
+class OnTapCatogoryChangeEvent extends SearchEvent{
+  final int index;
+
+  OnTapCatogoryChangeEvent({required this.index});
+}
+class OnSortEvent extends SearchEvent{
+  final String text;
+
+  OnSortEvent({required this.text});
+}

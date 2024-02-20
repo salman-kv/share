@@ -4,6 +4,7 @@ import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/enum/hotel_type.dart';
 
 class RoomModel {
+  final String? id;
   final String hotelId;
   final String hotelName;
   final String roomNumber;
@@ -27,7 +28,8 @@ class RoomModel {
       required this.images,
       required this.roomType,
       required this.latlng,
-      required this.place
+      required this.place,
+      this.id
       });
 
   static Map<String, dynamic> toMap(RoomModel roomModel) {
@@ -47,11 +49,11 @@ class RoomModel {
         'latitude': roomModel.latlng!.latitude,
         'longitude': roomModel.latlng!.longitude
       },
-      FirebaseFirestoreConst.firebaseFireStoreHotelPlace:roomModel.place
+      FirebaseFirestoreConst.firebaseFireStoreHotelPlace:roomModel.place,
     };
   }
 
-  static RoomModel fromMap(Map<String, dynamic> map) {
+  static RoomModel fromMap(Map<String, dynamic> map,String id) {
     HotelType hotelType;
     if (map[FirebaseFirestoreConst.firebaseFireStoreHotelType] ==
         'HotelType.hotel') {
@@ -71,7 +73,8 @@ class RoomModel {
         images: map[FirebaseFirestoreConst.firebaseFireStoreRoomImages],
         roomType: hotelType,
         latlng: LatLng(map['latlng']['latitude'], map['latlng']['longitude']),
-        place: map[FirebaseFirestoreConst.firebaseFireStoreHotelPlace]
+        place: map[FirebaseFirestoreConst.firebaseFireStoreHotelPlace],
+        id: id
         );
   }
 }

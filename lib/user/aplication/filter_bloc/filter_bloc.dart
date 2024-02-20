@@ -13,6 +13,7 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
   RangeValues? tempRangeValues;
   List<String> features = [];
   List<String> tempFeatures = [];
+
   FilterBloc() : super(InitialFilterState()) {
     on<OnChangeFilterPriceEvent>((event, emit) {
       tempRangeValues = RangeValues(event.rangeValues.start.roundToDouble(),
@@ -32,6 +33,12 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
         tempFeatures.add(event.val);
       }
       emit(FeatureValueChangedFilterStare());
+    });
+    on<OnCancelSearchAndFilterRemoveEvent>((event, emit) {
+      features=[];
+      rangeValues = const RangeValues(0, 5000);
+      emit(FeatureValueChangedFilterStare());
+
     });
   }
 }

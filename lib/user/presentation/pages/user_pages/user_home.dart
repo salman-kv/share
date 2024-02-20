@@ -18,26 +18,32 @@ class UserHome extends StatelessWidget {
         CommonWidget().customSearchBar(context),
         Column(
           children: [
-            CommonWidget().categoryList(context),
             Visibility(
               visible: context.watch<SearchBloc>().visibility,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
                 children: [
-                  CommonWidget().sortButton(context),
-                  CommonWidget().filtertButton(context)
+                  CommonWidget().categoryList(context), 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CommonWidget().sortButton(context),
+                      CommonWidget().filtertButton(context)
+                    ],
+                  ),
                 ],
               ),
             ),
             BlocConsumer<SearchBloc, SearchState>(
               listener: (context, state) {
-
+                if(state is SortSuccessState){
+                  BlocProvider.of<SearchBloc>(context).add(OnRoomDeatailsFilteringEvent());
+                }
               },
               builder: (context, state) {
                 if (state is RoomDeatailsLoadingSearchhState) {
                   return const CircularProgressIndicator();
                 } else if (state is InitialSearchState) {
-                   BlocProvider.of<SearchBloc>(context)
+                  BlocProvider.of<SearchBloc>(context)
                       .add(InitialRoomFetchingSearchEvent());
                   return const CircularProgressIndicator();
                 } else {

@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -178,7 +177,7 @@ getRoomDataFromFireStoreAndStore({required BuildContext context})async{
 // Placemark userPlaceMark=BlocProvider.of<SearchBloc>(context).placemark!;
 QuerySnapshot<Map<String, dynamic>> instance=await FirebaseFirestore.instance.collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection).get();
 List<RoomModel> data=instance.docs.map((e) {
-return RoomModel.fromMap(e.data());
+return RoomModel.fromMap(e.data(),e.id);
 }).toList();
 BlocProvider.of<SearchBloc>(context).listRoomModel=data;
 }

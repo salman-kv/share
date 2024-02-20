@@ -34,6 +34,12 @@ class FirebaseFirestoreConst {
   static String firebaseFireStoreRoomImages='images';
   static String firebaseFireStoreRoomAvailability='availability';
   static String firebaseFireStoreRooms='rooms';
+  static String firebaseFireStoreRoomId='id';
+
+
+  // sort constant
+  static String firebasefirestoreLowToHigh='LTH';
+  static String firebasefirestoreHighToLow='HTL';
 }
 
 

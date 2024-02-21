@@ -27,9 +27,9 @@ class RoomDeatailedShowingPage extends StatelessWidget {
             if (state is SingleRoomInitialState) {
               BlocProvider.of<SingleRoomBloc>(context)
                   .add(OnInitialRoomDeatailsAddingEvent(id: roomId));
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: CommonWidget().loadingWidget());
             } else if (state is SingleRoomLoadingState) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: CommonWidget().loadingWidget());
             } else {
               return SafeArea(
                   child: Scaffold(

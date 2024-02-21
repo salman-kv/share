@@ -43,11 +43,11 @@ class UserHome extends StatelessWidget {
               },
               builder: (context, state) {
                 if (state is RoomDeatailsLoadingSearchhState) {
-                  return const CircularProgressIndicator();
+                  return  CommonWidget().loadingWidget();
                 } else if (state is InitialSearchState) {
                   BlocProvider.of<SearchBloc>(context)
                       .add(OnRoomDeatailsFilteringEvent());
-                  return const CircularProgressIndicator();
+                  return CommonWidget().loadingWidget();
                 } else {
                   return BlocProvider.of<SearchBloc>(context)
                             .listRoomModel.isEmpty? Column(

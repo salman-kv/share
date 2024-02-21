@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/firebase_options.dart';
 import 'package:share/user/aplication/filter_bloc/filter_bloc.dart';
+import 'package:share/user/aplication/main_user_bloc/main_user_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
@@ -47,6 +48,10 @@ class MainApp extends StatelessWidget {
           create: (context) {
             return FilterBloc();
           },
+        ),
+        BlocProvider(
+          create: (context) => MainUserBloc(),
+          child: Container(),
         )
       ],
       child: MaterialApp(

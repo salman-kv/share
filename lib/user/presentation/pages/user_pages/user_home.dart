@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_event.dart';
 import 'package:share/user/aplication/search_bloc/search_state.dart';
@@ -18,9 +19,10 @@ class UserHome extends StatelessWidget {
         CommonWidget().customSearchBar(context),
         Column(
           children: [
-            Visibility(
-              visible: context.watch<SearchBloc>().visibility,
-              child: Column(
+            // Visibility(
+            //   visible: context.watch<SearchBloc>().visibility,
+            //   child:
+               Column(
                 children: [
                   CommonWidget().categoryList(context), 
                   Row(
@@ -32,7 +34,7 @@ class UserHome extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
+            // ),
             BlocConsumer<SearchBloc, SearchState>(
               listener: (context, state) {
                 if(state is SortSuccessState){
@@ -44,10 +46,27 @@ class UserHome extends StatelessWidget {
                   return const CircularProgressIndicator();
                 } else if (state is InitialSearchState) {
                   BlocProvider.of<SearchBloc>(context)
-                      .add(InitialRoomFetchingSearchEvent());
+                      .add(OnRoomDeatailsFilteringEvent());
                   return const CircularProgressIndicator();
                 } else {
-                  return Column(
+                  return BlocProvider.of<SearchBloc>(context)
+                            .listRoomModel.isEmpty? Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Lottie.asset('assets/images/no data found.json'),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        Text(
+                                          'No Room found',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge!
+                                              .copyWith(color: Colors.grey),
+                                        )
+                                      ],
+                                    ) : Column(
                     children: List.generate(
                         BlocProvider.of<SearchBloc>(context)
                             .listRoomModel

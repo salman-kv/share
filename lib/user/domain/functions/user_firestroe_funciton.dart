@@ -16,10 +16,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
+import 'package:share/user/domain/functions/shared_prefrence.dart';
 import 'package:share/user/domain/model/room_model.dart';
 import 'package:share/user/domain/model/user_model.dart';
 import 'package:share/user/presentation/alerts/toasts.dart';
 import 'package:http/http.dart' as http;
+import 'package:share/user/presentation/pages/userLogin/user_login_page.dart';
 
 class UserFireStroreFunction {
   // add user in to firestore
@@ -143,6 +145,8 @@ class UserFireStroreFunction {
       // find the current location by geo locator
       var position = await Geolocator.getCurrentPosition();
       BlocProvider.of<SearchBloc>(context).position = LatLng(position.latitude, position.longitude);
+      log('current postion');
+      log('${BlocProvider.of<SearchBloc>(context).position}');
       return LatLng(position.latitude, position.longitude);
     }
   }
@@ -182,6 +186,18 @@ return RoomModel.fromMap(e.data(),e.id);
 BlocProvider.of<SearchBloc>(context).listRoomModel=data;
 }
 
+
+// logout function
+
+ userLogOut(BuildContext context) async {
+    FirebaseAuth.instance.signOut();
+    GoogleSignIn().signOut();
+    await SharedPreferencesClass.deleteUserid();
+    await SharedPreferencesClass.deleteUserEmail();
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (ctx) {
+      return UserLogin();
+    }), (route) => false);
+  }
 
 
 }

@@ -10,6 +10,7 @@ import 'package:share/user/presentation/pages/user_pages/user_current_property_p
 import 'package:share/user/presentation/pages/user_pages/user_home.dart';
 import 'package:share/user/presentation/pages/user_pages/user_map.dart';
 import 'package:share/user/presentation/pages/user_pages/user_message.dart';
+import 'package:share/user/presentation/widgets/common_widget.dart';
 
 class MainPage extends StatelessWidget {
 
@@ -53,6 +54,7 @@ class MainPage extends StatelessWidget {
               ),
               // body: screens[context.watch<SubAdminMainPageBloc>().index],
               body: userPages[context.watch<MainUserBloc>().index],
+              drawer: CommonWidget().drawerReturnFunction(context),
               // drawer:CommonWidget().drawerReturnFunction(context),
               // bottomNavigationBar: MotionTabBar(
               //   initialSelectedTab: 'Home',

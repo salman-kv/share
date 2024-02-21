@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,11 +11,15 @@ import 'package:share/user/aplication/filter_bloc/filter_state.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_event.dart';
 import 'package:share/user/aplication/search_bloc/search_state.dart';
+import 'package:share/user/aplication/singel_room_bloc/single_room_bloc.dart';
+import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/functions/user_function.dart';
 import 'package:share/user/domain/model/room_model.dart';
+import 'package:share/user/presentation/alerts/alert.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/const/const_color.dart';
+import 'package:share/user/presentation/pages/userLogin/user_login_page.dart';
 import 'package:share/user/presentation/pages/user_pages/room_page/room_deatailed_page.dart';
 
 TextEditingController searchController = TextEditingController();
@@ -253,7 +258,9 @@ class CommonWidget {
     // log('hotel showing pimnem rebuild aaayi');
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-        return RoomDeatailedShowingPage();
+        return RoomDeatailedShowingPage(
+          roomId: roomModel.id!,
+        );
       })),
       child: Stack(
         children: [
@@ -626,7 +633,7 @@ class CommonWidget {
 
   // booking container
 
-  bookingContainer({required BuildContext context}) {
+  bookingContainer({required BuildContext context,required RoomModel roomModel}) {
     return Container(
       margin: EdgeInsets.only(
           top: MediaQuery.of(context).size.height * .02,
@@ -663,11 +670,10 @@ class CommonWidget {
                   onTap: () {
                     dateSelectingBottomSheet(context: context);
                   },
-                  child: const Expanded(
-                      child: Text(
+                  child: const Text(
                     'Selected date',
                     textAlign: TextAlign.end,
-                  )),
+                  ),
                 )
               ],
             ),
@@ -703,7 +709,7 @@ class CommonWidget {
                     ),
                     child: Center(
                       child: Text(
-                        'A10',
+                        roomModel.roomNumber ,
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                     ),
@@ -720,23 +726,23 @@ class CommonWidget {
   // total payment container
   totalpaymentContainer({required BuildContext context}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.only(
+        bottom: 10,
+      ),
       child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10,), 
         constraints: BoxConstraints(
             minHeight: MediaQuery.of(context).size.height * 0.06),
         decoration: BoxDecoration(
             color: ConstColor().mainColorblue.withOpacity(0.3),
             borderRadius: BorderRadius.circular(5)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Total Amount',
-                  style: Theme.of(context).textTheme.titleMedium),
-              Text('₹ 1500', style: Theme.of(context).textTheme.titleLarge)
-            ],
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Total Amount',
+                style: Theme.of(context).textTheme.titleMedium),
+            Text('₹ 1500', style: Theme.of(context).textTheme.titleLarge)
+          ],
         ),
       ),
     );
@@ -776,7 +782,7 @@ class CommonWidget {
             minHeight: MediaQuery.of(context).size.height * 0.055),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 12, 85, 6)),
+              backgroundColor: const Color.fromARGB(255, 12, 85, 6)),
           onPressed: () {},
           child: Text(
             'Book Now & Pay At Hotel',
@@ -794,9 +800,42 @@ class CommonWidget {
 
   dateSelectingBottomSheet({required BuildContext context}) {
     log('sdfsdf');
-   return CalendarDatePicker(
-    initialDate: DateTime.now(), firstDate: DateTime(2024), lastDate: DateTime(2050), onDateChanged: (value) {
-   },);
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SingleChildScrollView(
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'From',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                EasyInfiniteDateTimeLine(
+                    onDateChange: (selectedDate) {
+                      print(selectedDate);
+                    },
+                    firstDate: DateTime.now(),
+                    focusDate: DateTime.now(),
+                    lastDate: DateTime(2050)),
+                Text(
+                  'To',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                EasyInfiniteDateTimeLine(
+                    firstDate: DateTime.now(),
+                    focusDate: DateTime.now().add(const Duration(days: 1)),
+                    lastDate: DateTime(2050)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    //  return CalendarDatePicker(
+    //   initialDate: DateTime.now(), firstDate: DateTime(2024), lastDate: DateTime(2050), onDateChanged: (value) {
+    //  },);
     // return showModalBottomSheet(
     //   context: context,
     //   builder: (context) {
@@ -807,5 +846,154 @@ class CommonWidget {
     //     );
     //   },
     // );
+  }
+
+
+  // drawer function
+   drawerReturnFunction(BuildContext context) {
+    return Drawer(
+      backgroundColor:
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? const Color.fromARGB(150, 255, 255, 255)
+              : const Color.fromARGB(150, 0, 0, 0),
+      child: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.all(10),
+            height: MediaQuery.of(context).size.width * 0.45,
+            width: MediaQuery.of(context).size.width * 0.45,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(150),
+              ),
+              image: DecorationImage(
+                  image: NetworkImage(
+                      BlocProvider.of<UserLoginBloc>(context)
+                          .userModel!
+                          .imagePath),
+                  fit: BoxFit.cover),
+            ),
+          ),
+          Text(
+            BlocProvider.of<UserLoginBloc>(context).userModel!.name,
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () {},
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.person_2_rounded,
+                          size: 30,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.01,
+                        ),
+                        Text(
+                          'Profile',
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {},
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.security_rounded,
+                          size: 30,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.01,
+                        ),
+                        Text(
+                          'Privacy policy',
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {},
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.privacy_tip_rounded,
+                          size: 30,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.01,
+                        ),
+                        Text(
+                          'Terms & Condition',
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Alerts().dialgForDelete(context: context, type: 'logOut');
+                  },
+                  child: Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: MediaQuery.of(context).platformBrightness ==
+                              Brightness.light
+                          ? Colors.white
+                          : Colors.black,
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.logout_outlined,
+                          size: 30,
+                          color: Color.fromARGB(255, 214, 6, 6),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.01,
+                        ),
+                        Text(
+                          'Log Out',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium!
+                              .copyWith(color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

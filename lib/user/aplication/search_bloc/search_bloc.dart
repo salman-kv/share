@@ -22,13 +22,23 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   List<Map<String, dynamic>> list = [
     {'name': 'All', 'select': true},
     {'name': 'Hotel', 'select': false},
-    {'name': 'Dormetiory', 'select': false}
+    {'name': 'Dormitory', 'select': false}
   ];
   String? sort;
   SearchBloc() : super(InitialSearchState()) {
     on<OnChangeSearchEvent>((event, emit) {
       log(event.text);
       searchText = event.text;
+      visibility = false;
+      // searchText = null;
+      features = null;
+      rangeValues = null;
+      sort = null;
+      list = [
+        {'name': 'All', 'select': true},
+        {'name': 'Hotel', 'select': false},
+        {'name': 'Dormitory', 'select': false}
+      ];
       emit(OnChangeSearchState());
     });
     on<OnTapSearchEvent>((event, emit) {
@@ -46,7 +56,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         listRoomModel.sort((b, a) => a.price - b.price);
       }
       sort = event.text;
-      log('${listRoomModel}');
       emit(RoomDeatailsSuccessSearchhState());
     });
     on<OnCancelSearchEvent>((event, emit) {
@@ -54,11 +63,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       searchText = null;
       features = null;
       rangeValues = null;
-      sort=null;
+      sort = null;
       list = [
         {'name': 'All', 'select': true},
         {'name': 'Hotel', 'select': false},
-        {'name': 'Dormetiory', 'select': false}
+        {'name': 'Dormitory', 'select': false}
       ];
       emit(InitialSearchState());
     });
@@ -77,7 +86,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       emit(RoomDeatailsSuccessSearchhState());
     });
     on<OnRoomDeatailsFilteringEvent>((event, emit) async {
-      sort=null;
+      sort = null;
       listRoomModel.clear();
       emit(RoomDeatailsLoadingSearchhState());
       QuerySnapshot<Map<String, dynamic>> instance = await FirebaseFirestore
@@ -87,15 +96,22 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       List<RoomModel> roomsDeatails = instance.docs.map((e) {
         return RoomModel.fromMap(e.data(), e.id);
       }).toList();
+      log('search text start');
       // filter by the search name first
-      if (searchText != '' || searchText != null) {
+      if (searchText != null) {
         for (RoomModel singleRoomModel in roomsDeatails) {
-          if (singleRoomModel.place!.toLowerCase().contains(searchText!.toLowerCase())) {
+          if (singleRoomModel.place!
+              .toLowerCase()
+              .contains(searchText!.toLowerCase())) {
             listRoomModel.add(singleRoomModel);
           }
         }
+      } else {
+        listRoomModel.addAll(roomsDeatails);
       }
+
       log('over the text filter');
+      log('feature text start');
       if (features != null) {
         for (int i = 0; i < listRoomModel.length; i++) {
           log('room features');
@@ -112,6 +128,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           }
         }
       }
+      log('feature text end');
+      log('range  start');
       if (rangeValues != null) {
         for (int i = 0; i < listRoomModel.length; i++) {
           if (listRoomModel[i].price < rangeValues!.start ||
@@ -121,6 +139,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           }
         }
       }
+      log('catorogory  start');
       if (list[1]['select'] == true) {
         for (int i = 0; i < listRoomModel.length; i++) {
           if (!(listRoomModel[i].roomType == HotelType.hotel)) {

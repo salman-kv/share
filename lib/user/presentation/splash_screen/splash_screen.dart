@@ -10,7 +10,6 @@ import 'package:share/user/aplication/user_login_bloc/user_login_state.dart';
 import 'package:share/user/domain/functions/user_firestroe_funciton.dart';
 import 'package:share/user/presentation/pages/main_page.dart';
 import 'package:share/user/presentation/pages/userLogin/user_login_page.dart';
-import 'package:share/user/presentation/pages/user_pages/user_home.dart';
 import 'package:share/user/presentation/pages/welcomeUser/user_welcome_user.dart';
 
 class SplashScreen extends StatelessWidget {

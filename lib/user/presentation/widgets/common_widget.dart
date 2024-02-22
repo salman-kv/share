@@ -9,19 +9,22 @@ import 'package:lottie/lottie.dart';
 import 'package:share/user/aplication/filter_bloc/filter_bloc.dart';
 import 'package:share/user/aplication/filter_bloc/filter_event.dart';
 import 'package:share/user/aplication/filter_bloc/filter_state.dart';
+import 'package:share/user/aplication/hotel_bloc/hotel_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_event.dart';
 import 'package:share/user/aplication/search_bloc/search_state.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_bloc.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
+import 'package:share/user/aplication/user_login_bloc/user_login_state.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
+import 'package:share/user/domain/enum/hotel_type.dart';
 import 'package:share/user/domain/functions/user_function.dart';
 import 'package:share/user/domain/model/main_property_model.dart';
 import 'package:share/user/domain/model/room_model.dart';
 import 'package:share/user/presentation/alerts/alert.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/const/const_color.dart';
-import 'package:share/user/presentation/pages/userLogin/user_login_page.dart';
+import 'package:share/user/presentation/pages/user_pages/hotel_page/hotel_showing_page.dart';
 import 'package:share/user/presentation/pages/user_pages/room_page/room_deatailed_page.dart';
 
 TextEditingController searchController = TextEditingController();
@@ -80,6 +83,7 @@ class CommonWidget {
                 ? [
                     IconButton(
                         onPressed: () {
+                          BlocProvider.of<FilterBloc>(context).rangeValues=RangeValues(0, 5000);
                           BlocProvider.of<SearchBloc>(context)
                               .add(OnCancelSearchEvent());
 
@@ -355,8 +359,10 @@ class CommonWidget {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        roomModel.roomType.toString(),
-                        style: Theme.of(context).textTheme.titleSmall,
+                        roomModel.roomType == HotelType.hotel
+                            ? 'Hotel'
+                            : 'Dormitory',
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                     )
                   ],
@@ -470,19 +476,22 @@ class CommonWidget {
 
   // hotel Showing bottom sheet
 
-  hotelBottomSheet({required BuildContext context,required MainPropertyModel mainPropertyModel}) {
+  hotelBottomSheet(
+      {required BuildContext context,
+      required MainPropertyModel mainPropertyModel}) {
     return showModalBottomSheet(
       context: context,
       builder: (context) {
-        return Padding(padding: EdgeInsets.only(
-                  top: 20,
-                  right: 20,
-                  left: 20,
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-               child: SingleChildScrollView(
-                child: hotelShowingContainer(context: context, mainPropertyModel: mainPropertyModel)
-               ),   
-                  );
+        return Padding(
+          padding: EdgeInsets.only(
+              top: 10,
+              right: 10,
+              left: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: SingleChildScrollView(
+              child: hotelShowingContainer(
+                  context: context, mainPropertyModel: mainPropertyModel)),
+        );
       },
     );
   }
@@ -490,121 +499,166 @@ class CommonWidget {
   // sinle hotel showing page
 
   hotelShowingContainer(
-      {required BuildContext context, required MainPropertyModel mainPropertyModel}) {
+      {required BuildContext context,
+      required MainPropertyModel mainPropertyModel}) {
     return GestureDetector(
-      // onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-        // return RoomDeatailedShowingPage(
-          // roomId: roomModel.id!,
-        // );
-      // })),
-      child: Stack(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+        return BlocProvider(
+          create: (context) => HotelBloc(hotelId: mainPropertyModel.id!),
+          child: HotelShowingPage(),
+        );
+      })),
+      child: Column(
         children: [
-          Container(
-            // margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: ConstColor().mainColorblue.withOpacity(0.3),
-            ),
-            constraints: const BoxConstraints(minHeight: 250),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      image: DecorationImage(
-                          image: NetworkImage(mainPropertyModel.image[0]),
-                          fit: BoxFit.fill)),
+          bottomSheetTopContainer(context: context),
+          Stack(
+            children: [
+              Container(
+                // margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: ConstColor().mainColorblue.withOpacity(0.3),
                 ),
-                Row(
+                constraints: const BoxConstraints(minHeight: 250),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'roomModel.hotelName',
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.favorite,
-                                size: 30,
-                                color: Colors.red,
-                              ),
-                              onPressed: () {},
-                            )
-                          ],
-                        ),
-                      ),
+                    Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          image: DecorationImage(
+                              image: NetworkImage(mainPropertyModel.image[0]),
+                              fit: BoxFit.cover)),
                     ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 25),
-                    Text(
-                      // propertyModel.place,
-                      'roomModel.place!',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    )
-                  ],
-                ),
-                Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    child: Text('roomModel.roomNumber',
-                        style: Theme.of(context).textTheme.titleMedium)),
-                Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    child: Text(
-                      '₹ {roomModel.price}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(fontSize: 20),
-                    )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
                     Row(
                       children: [
-                        const Icon(
-                          Icons.star,
-                          size: 25,
-                          color: Color.fromARGB(255, 230, 207, 5),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  mainPropertyModel.propertyNmae,
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.favorite,
+                                    size: 30,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () {},
+                                )
+                              ],
+                            ),
+                          ),
                         ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.location_on, size: 25),
                         Text(
-                          // propertyModel.place,
-                          '4.2 (250)',
-                          style: Theme.of(context).textTheme.displaySmall,
+                          mainPropertyModel.place,
+                          style: Theme.of(context).textTheme.titleMedium,
                         )
                       ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                       ' roomModel.roomType.toString()',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    )
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 0),
+                        child: Text(
+                            mainPropertyModel.hotelType == HotelType.hotel
+                                ? 'Type : Hotel'
+                                : 'Type : Dormitory',
+                            style: Theme.of(context).textTheme.titleMedium)),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 0),
+                        child: Text('Rooms : ${mainPropertyModel.rooms.length}',
+                            style: Theme.of(context).textTheme.titleMedium)),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.015,
+          )
         ],
       ),
     );
   }
 
+  // single room Showing container inside the hotel page
+  roomShowingContainerInsideTheHotelPage(
+      {required BuildContext context, required RoomModel roomModel}) {
+    log('ethunund');
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            return RoomDeatailedShowingPage(roomId: roomModel.id!);
+          },
+        ));
+      },
+      child: Container(
+          constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height * 0.1),
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          decoration: BoxDecoration(
+              color: ConstColor().mainColorblue.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(10)),
+          child: Row(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.1,
+                width: MediaQuery.of(context).size.width * 0.3,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                        image: NetworkImage(
+                          roomModel.images[0],
+                        ),
+                        fit: BoxFit.cover)),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      roomModel.roomNumber,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      '₹ ${roomModel.price}',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )),
+    );
+  }
 
+// bottom sheet top container
+
+  bottomSheetTopContainer({required BuildContext context}) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      height: MediaQuery.of(context).size.height * 0.009,
+      width: MediaQuery.of(context).size.width * 0.3,
+      decoration: BoxDecoration(
+          color: Colors.grey, borderRadius: BorderRadius.circular(100)),
+    );
+  }
 
   // round poit in diffrent color
 
@@ -997,24 +1051,24 @@ class CommonWidget {
               ? const Color.fromARGB(150, 255, 255, 255)
               : const Color.fromARGB(150, 0, 0, 0),
       child: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(10),
-            height: MediaQuery.of(context).size.width * 0.45,
-            width: MediaQuery.of(context).size.width * 0.45,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(150),
-              ),
-              image: BlocProvider.of<UserLoginBloc>(context).userModel == null
-                  ? null
-                  : DecorationImage(
-                      image: NetworkImage(
-                          BlocProvider.of<UserLoginBloc>(context)
-                              .userModel!
-                              .imagePath),
-                      fit: BoxFit.cover),
-            ),
+        children: [Container(
+                margin: const EdgeInsets.all(10),
+                height: MediaQuery.of(context).size.width * 0.45,
+                width: MediaQuery.of(context).size.width * 0.45,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(150),
+                  ),
+                  image:
+                      BlocProvider.of<UserLoginBloc>(context).userModel == null
+                          ? null
+                          : DecorationImage(
+                              image: NetworkImage(
+                                  BlocProvider.of<UserLoginBloc>(context)
+                                      .userModel!
+                                      .imagePath),
+                              fit: BoxFit.cover),
+                ),
           ),
           Text(
             BlocProvider.of<UserLoginBloc>(context).userModel!.name,
@@ -1026,7 +1080,8 @@ class CommonWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                  },
                   child: Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 20, vertical: 7),

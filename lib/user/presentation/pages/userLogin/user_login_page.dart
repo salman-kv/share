@@ -8,7 +8,6 @@ import 'package:share/user/aplication/user_signup_bloc/user_signup_event.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_state.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/pages/main_page.dart';
-import 'package:share/user/presentation/pages/user_pages/user_home.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup.dart';
 import 'package:share/user/presentation/pages/user_signup/user_signup_more.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';

@@ -9,9 +9,6 @@ import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
 import 'package:share/user/domain/functions/shared_prefrence.dart';
 import 'package:share/user/presentation/splash_screen/splash_screen.dart';
-import 'package:share/user/presentation/pages/userLogin/user_login_page.dart';
-import 'package:share/user/presentation/pages/user_pages/user_home.dart';
-import 'package:share/user/presentation/pages/welcomeUser/user_welcome_user.dart';
 import 'package:share/user/presentation/theme/user_theme.dart';
 
 void main() async {

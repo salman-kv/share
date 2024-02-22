@@ -5,11 +5,11 @@ import 'package:share/user/aplication/main_user_bloc/main_user_bloc.dart';
 import 'package:share/user/aplication/main_user_bloc/main_user_event.dart';
 import 'package:share/user/aplication/main_user_bloc/main_user_state.dart';
 import 'package:share/user/presentation/const/const_color.dart';
-import 'package:share/user/presentation/pages/user_pages/user_booking.dart';
-import 'package:share/user/presentation/pages/user_pages/user_current_property_page.dart';
-import 'package:share/user/presentation/pages/user_pages/user_home.dart';
-import 'package:share/user/presentation/pages/user_pages/user_map.dart';
-import 'package:share/user/presentation/pages/user_pages/user_message.dart';
+import 'package:share/user/presentation/pages/user_pages/main_pages/user_booking.dart';
+import 'package:share/user/presentation/pages/user_pages/main_pages/user_current_property_page.dart';
+import 'package:share/user/presentation/pages/user_pages/main_pages/user_home.dart';
+import 'package:share/user/presentation/pages/user_pages/main_pages/user_map.dart';
+import 'package:share/user/presentation/pages/user_pages/main_pages/user_message.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';
 
 class MainPage extends StatelessWidget {

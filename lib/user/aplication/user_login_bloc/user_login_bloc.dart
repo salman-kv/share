@@ -32,11 +32,11 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
       log('$userId');
       DocumentSnapshot<Map<String, dynamic>> instant = await FirebaseFirestore.instance
           .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection)
-          .doc(userId!)
+          .doc(userId)
           .get();
+         
       Map<String, dynamic> data = instant.data() as Map<String, dynamic>;
       userModel = UserModel.fromMap(data, event.userId);
-      log('${userModel}');
       log('loginSuccess');
       emit(UserLoginSuccessState());
     });

@@ -207,13 +207,13 @@ class UserSignUpMoreInfo extends StatelessWidget {
                                                     .email!,
                                                 name: nameController.text,
                                                 password: passwordController.text,
-                                                phone: int.parse(
-                                                    phoneController.text),
+                                                phone: 
+                                                    phoneController.text,
                                                 imagePath: imageUrl,
                                                 userId: ''),
                                             compire: FirebaseFirestoreConst
                                                 .firebaseFireStoreEmail));
-                                    // ignore: use_build_context_synchronously
+                                   
                                   }
                                 },
                                 child: state is UserSignupLoading

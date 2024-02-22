@@ -61,7 +61,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<OnCamaraPositionChangeEvent>((event, emit) {
       controller!.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: userPosition!, zoom: 14),
+          CameraPosition(target: userPosition!, zoom: 15),
         ),
       );
       emit(MapSuccessState());

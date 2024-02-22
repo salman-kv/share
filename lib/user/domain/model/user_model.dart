@@ -5,7 +5,7 @@ import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 class UserModel {
   final String name;
   final String password;
-  final int phone;
+  final String phone;
   final String imagePath;
   final String email;
   final String? userId;
@@ -37,6 +37,7 @@ class UserModel {
         password: map[FirebaseFirestoreConst.firebaseFireStorePassword],
         phone: map[FirebaseFirestoreConst.firebaseFireStorePhone],
         imagePath: map[FirebaseFirestoreConst.firebaseFireStoreImage]);
+         log('user deatails kitty');
     return a;
   }
 }

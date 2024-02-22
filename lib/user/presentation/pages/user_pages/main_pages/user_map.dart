@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +5,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share/user/aplication/map_bloc/map_bloc.dart';
 import 'package:share/user/aplication/map_bloc/map_event.dart';
 import 'package:share/user/aplication/map_bloc/map_state.dart';
-import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';
 
 class UserMapPage extends StatelessWidget {
@@ -33,8 +31,8 @@ class UserMapPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Finding the Rooms near by you . . .',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          'Finding Rooms near by you . . .',
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                         CommonWidget().loadingWidget(),
                       ],

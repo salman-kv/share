@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/enum/hotel_type.dart';
@@ -54,6 +56,7 @@ class RoomModel {
   }
 
   static RoomModel fromMap(Map<String, dynamic> map,String id) {
+    // log('${map}');
     HotelType hotelType;
     if (map[FirebaseFirestoreConst.firebaseFireStoreHotelType] ==
         'HotelType.hotel') {

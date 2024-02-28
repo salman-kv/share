@@ -1,15 +1,14 @@
 import 'dart:developer';
-
-import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_bloc.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_event.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_state.dart';
 import 'package:share/user/domain/enum/hotel_type.dart';
-import 'package:share/user/presentation/const/const_color.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';
+import 'package:share/user/presentation/widgets/room_booking_widget.dart';
 
 class RoomDeatailedShowingPage extends StatelessWidget {
   final String roomId;
@@ -19,8 +18,15 @@ class RoomDeatailedShowingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     log('single room keranind');
     return Scaffold(
-      body: BlocProvider(
-        create: (context) => SingleRoomBloc(),
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => SingleRoomBloc(),
+          ),
+          BlocProvider(
+            create: (context) => RoomBookingBloc(),
+          )
+        ],
         child: BlocConsumer<SingleRoomBloc, SingleRoomState>(
           listener: (context, state) {},
           builder: (context, state) {
@@ -38,24 +44,34 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: ListView(
                     children: [
-                      Container(
-                        // margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: ConstColor().mainColorblue.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: CarouselSlider(
-                            items: List.generate(
-                                context
+                      CarouselSlider(
+                        items: List.generate(
+                            context
+                                .watch<SingleRoomBloc>()
+                                .roomModel!
+                                .images
+                                .length, (index) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(context
                                     .watch<SingleRoomBloc>()
                                     .roomModel!
-                                    .images
-                                    .length, (index) {
-                              return Image.network(context
-                                  .watch<SingleRoomBloc>()
-                                  .roomModel!
-                                  .images[index]);
-                            }),
-                            options: CarouselOptions()),
+                                    .images[index]),
+                                fit: BoxFit.fill,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          );
+                        }),
+                        options: CarouselOptions(
+                          autoPlay: true,
+                          autoPlayInterval: const Duration(seconds: 3),
+                          autoPlayAnimationDuration: const Duration(seconds: 2),
+                          viewportFraction: 1,
+                          clipBehavior: Clip.antiAlias,
+                          enlargeCenterPage: true,
+                        ),
                       ),
                       Row(
                         children: [
@@ -161,18 +177,59 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                                   .features[index]);
                             }),
                           )),
-                      CommonWidget().bookingContainer(
+                      RoomBookingWidget().bookingContainer(
                           context: context,
                           roomModel:
                               context.watch<SingleRoomBloc>().roomModel!),
-                      CommonWidget().totalpaymentContainer(context: context),
+                      RoomBookingWidget().totalpaymentContainer(
+                          context: context,
+                          price:
+                              context.watch<SingleRoomBloc>().roomModel!.price),
                       Row(
                         children: [
-                          CommonWidget().payNowButton(context: context),
+                          RoomBookingWidget().payNowButton(
+                              context: context,
+                              price: context
+                                          .watch<RoomBookingBloc>()
+                                          .startingDate !=
+                                      null
+                                  ? context
+                                          .watch<RoomBookingBloc>()
+                                          .endingDate!
+                                          .difference(
+                                              BlocProvider.of<RoomBookingBloc>(
+                                                      context)
+                                                  .startingDate!)
+                                          .inDays *
+                                      BlocProvider.of<SingleRoomBloc>(context)
+                                          .roomModel!
+                                          .price
+                                  : BlocProvider.of<SingleRoomBloc>(context)
+                                      .roomModel!
+                                      .price),
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.03,
                           ),
-                          CommonWidget().bookAndPayAtHotel(context: context),
+                          RoomBookingWidget().bookAndPayAtHotel(
+                              context: context,
+                              price: context
+                                          .watch<RoomBookingBloc>()
+                                          .startingDate !=
+                                      null
+                                  ? context
+                                          .watch<RoomBookingBloc>()
+                                          .endingDate!
+                                          .difference(
+                                              BlocProvider.of<RoomBookingBloc>(
+                                                      context)
+                                                  .startingDate!)
+                                          .inDays *
+                                      BlocProvider.of<SingleRoomBloc>(context)
+                                          .roomModel!
+                                          .price
+                                  : BlocProvider.of<SingleRoomBloc>(context)
+                                      .roomModel!
+                                      .price),
                         ],
                       )
                     ],

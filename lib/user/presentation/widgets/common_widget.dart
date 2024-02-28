@@ -1,25 +1,31 @@
 import 'dart:developer';
+import 'dart:ffi';
 
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:share/user/aplication/filter_bloc/filter_bloc.dart';
 import 'package:share/user/aplication/filter_bloc/filter_event.dart';
 import 'package:share/user/aplication/filter_bloc/filter_state.dart';
 import 'package:share/user/aplication/hotel_bloc/hotel_bloc.dart';
+import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
+import 'package:share/user/aplication/room_bookin_bloc/room_booking_event.dart';
+import 'package:share/user/aplication/room_bookin_bloc/room_booking_state.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_event.dart';
 import 'package:share/user/aplication/search_bloc/search_state.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_bloc.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
-import 'package:share/user/aplication/user_login_bloc/user_login_state.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/enum/hotel_type.dart';
+import 'package:share/user/domain/functions/user_firestroe_funciton.dart';
 import 'package:share/user/domain/functions/user_function.dart';
 import 'package:share/user/domain/model/main_property_model.dart';
+import 'package:share/user/domain/model/room_booking_model.dart';
 import 'package:share/user/domain/model/room_model.dart';
 import 'package:share/user/presentation/alerts/alert.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
@@ -68,10 +74,10 @@ class CommonWidget {
                   size: 30,
                   color: Colors.grey,
                 )),
-            hintText: 'Search By place . . .',
+            hintText: 'Search by place and hotel name . . .',
             hintStyle: MaterialStatePropertyAll<TextStyle>(Theme.of(context)
                 .textTheme
-                .displayMedium!
+                .displaySmall!
                 .copyWith(color: Colors.grey)),
             textStyle: MaterialStatePropertyAll<TextStyle>(
               Theme.of(context)
@@ -83,7 +89,8 @@ class CommonWidget {
                 ? [
                     IconButton(
                         onPressed: () {
-                          BlocProvider.of<FilterBloc>(context).rangeValues=RangeValues(0, 5000);
+                          BlocProvider.of<FilterBloc>(context).rangeValues =
+                              const RangeValues(0, 5000);
                           BlocProvider.of<SearchBloc>(context)
                               .add(OnCancelSearchEvent());
 
@@ -823,226 +830,6 @@ class CommonWidget {
             ));
   }
 
-  // booking container
-
-  bookingContainer(
-      {required BuildContext context, required RoomModel roomModel}) {
-    return Container(
-      margin: EdgeInsets.only(
-          top: MediaQuery.of(context).size.height * .02,
-          bottom: MediaQuery.of(context).size.height * .02),
-      constraints: const BoxConstraints(minHeight: 100),
-      decoration: BoxDecoration(
-          color: UserFunction().backgroundColorAlmostSame(context),
-          borderRadius: BorderRadius.circular(10),
-          border:
-              Border.all(color: UserFunction().opositColor(context), width: 2)),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.calendar_month,
-                      size: 30,
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      'Dates',
-                      style: Theme.of(context).textTheme.displayMedium,
-                    )
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () {
-                    dateSelectingBottomSheet(context: context);
-                  },
-                  child: const Text(
-                    'Selected date',
-                    textAlign: TextAlign.end,
-                  ),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.bed,
-                      size: 30,
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      'Selected Room',
-                      style: Theme.of(context).textTheme.displayMedium,
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.1),
-                    height: MediaQuery.of(context).size.height * 0.04,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: UserFunction().opositColor(context),
-                    ),
-                    child: Center(
-                      child: Text(
-                        roomModel.roomNumber,
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  // total payment container
-  totalpaymentContainer({required BuildContext context}) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 10,
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-        ),
-        constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height * 0.06),
-        decoration: BoxDecoration(
-            color: ConstColor().mainColorblue.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(5)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Total Amount',
-                style: Theme.of(context).textTheme.titleMedium),
-            Text('₹ 1500', style: Theme.of(context).textTheme.titleLarge)
-          ],
-        ),
-      ),
-    );
-  }
-
-  // pay now button
-
-  payNowButton({required BuildContext context}) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.3,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height * 0.055),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 134, 134, 134)),
-          onPressed: () {},
-          child: Text(
-            'Pay Now',
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall!
-                .copyWith(color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // book and pay at hotel button
-
-  bookAndPayAtHotel({required BuildContext context}) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.6,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height * 0.055),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 12, 85, 6)),
-          onPressed: () {},
-          child: Text(
-            'Book Now & Pay At Hotel',
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall!
-                .copyWith(color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // bottom sheet of date selecting
-
-  dateSelectingBottomSheet({required BuildContext context}) {
-    log('sdfsdf');
-    return showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return SingleChildScrollView(
-          child: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'From',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                EasyInfiniteDateTimeLine(
-                    onDateChange: (selectedDate) {
-                      print(selectedDate);
-                    },
-                    firstDate: DateTime.now(),
-                    focusDate: DateTime.now(),
-                    lastDate: DateTime(2050)),
-                Text(
-                  'To',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                EasyInfiniteDateTimeLine(
-                    firstDate: DateTime.now(),
-                    focusDate: DateTime.now().add(const Duration(days: 1)),
-                    lastDate: DateTime(2050)),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-    //  return CalendarDatePicker(
-    //   initialDate: DateTime.now(), firstDate: DateTime(2024), lastDate: DateTime(2050), onDateChanged: (value) {
-    //  },);
-    // return showModalBottomSheet(
-    //   context: context,
-    //   builder: (context) {
-    //     return ListView(
-    //       children: [
-
-    //       ],
-    //     );
-    //   },
-    // );
-  }
-
   // drawer function
   drawerReturnFunction(BuildContext context) {
     return Drawer(
@@ -1051,27 +838,27 @@ class CommonWidget {
               ? const Color.fromARGB(150, 255, 255, 255)
               : const Color.fromARGB(150, 0, 0, 0),
       child: Column(
-        children: [Container(
-                margin: const EdgeInsets.all(10),
-                height: MediaQuery.of(context).size.width * 0.45,
-                width: MediaQuery.of(context).size.width * 0.45,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(150),
-                  ),
-                  image:
-                      BlocProvider.of<UserLoginBloc>(context).userModel == null
-                          ? null
-                          : DecorationImage(
-                              image: NetworkImage(
-                                  BlocProvider.of<UserLoginBloc>(context)
-                                      .userModel!
-                                      .imagePath),
-                              fit: BoxFit.cover),
-                ),
+        children: [
+          Container(
+            margin: const EdgeInsets.all(10),
+            height: MediaQuery.of(context).size.width * 0.45,
+            width: MediaQuery.of(context).size.width * 0.45,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(150),
+              ),
+              image: BlocProvider.of<UserLoginBloc>(context).userModel == null
+                  ? null
+                  : DecorationImage(
+                      image: NetworkImage(
+                          BlocProvider.of<UserLoginBloc>(context)
+                              .userModel!
+                              .imagePath),
+                      fit: BoxFit.cover),
+            ),
           ),
           Text(
-            BlocProvider.of<UserLoginBloc>(context).userModel!.name,
+            context.watch<UserLoginBloc>().userModel!=null ? BlocProvider.of<UserLoginBloc>(context).userModel!.name :'',
             style: Theme.of(context).textTheme.labelLarge,
           ),
           SizedBox(
@@ -1080,8 +867,7 @@ class CommonWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InkWell(
-                  onTap: () {
-                  },
+                  onTap: () {},
                   child: Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
@@ -1151,7 +937,7 @@ class CommonWidget {
                 ),
                 InkWell(
                   onTap: () {
-                    Alerts().dialgForDelete(context: context, type: 'logOut');
+                    Alerts().dialgForDelete(context: context,function: UserFireStroreFunction().userLogOut,text: 'Do you like to logout');
                   },
                   child: Container(
                     margin:

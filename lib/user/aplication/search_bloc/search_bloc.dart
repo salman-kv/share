@@ -101,8 +101,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       if (searchText != null) {
         for (RoomModel singleRoomModel in roomsDeatails) {
           if (singleRoomModel.place!
-              .toLowerCase()
-              .contains(searchText!.toLowerCase())) {
+                  .toLowerCase()
+                  .contains(searchText!.toLowerCase()) ||
+              singleRoomModel.hotelName
+                  .toLowerCase()
+                  .contains(searchText!.toLowerCase())) {
             listRoomModel.add(singleRoomModel);
           }
         }

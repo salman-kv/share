@@ -70,4 +70,28 @@ class SnackBars {
       ),
     );
   }
+  notifyingSnackBarTop(String notification, BuildContext context,
+      [Widget? widget]) {
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        margin: const EdgeInsets.all(10),
+        behavior: SnackBarBehavior.floating,
+        elevation: 400,
+        padding: const EdgeInsets.all(20),
+        duration: const Duration(seconds: 2),
+        shape: RoundedRectangleBorder(
+            side:
+                const BorderSide(color: Colors.black, width: 1, strokeAlign: 2),
+            borderRadius: BorderRadius.circular(20)),
+        backgroundColor: const Color.fromARGB(255, 86, 86, 86),
+        content: Text(
+          notification,
+          style: Theme.of(context)
+              .textTheme
+              .titleSmall!
+              .copyWith(color: Color.fromARGB(255, 255, 255, 255)),
+        ),
+      ),
+    );
+  }
 }

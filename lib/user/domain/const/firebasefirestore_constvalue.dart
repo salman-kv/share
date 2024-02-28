@@ -13,6 +13,8 @@ class FirebaseFirestoreConst {
   static String firebaseFireStoreSubAdminCollection = 'subadmin';
   static String firebaseFireStoreHotelCollection= 'hotel';
   static String firebaseFireStoreImages='images';
+  // static String firebaseFireStoreBookedRoomCollection='bookedRoomCollection';
+  static String firebaseFireStoreCurrentBookedRoomCollection='currentBookedRoomCollection';
 
 
 
@@ -35,11 +37,22 @@ class FirebaseFirestoreConst {
   static String firebaseFireStoreRoomAvailability='availability';
   static String firebaseFireStoreRooms='rooms';
   static String firebaseFireStoreRoomId='id';
+  static String firebaseFireStoreCurrentBookedUser='currentBookedUserId';
+  static String firebaseFireStoreCurrentBookeDeatails='currentBookedDeatails';
+  static String firebaseFireStoreCurrentBookeDate='RoombookedDate';
 
 
   // sort constant
   static String firebasefirestoreLowToHigh='LTH';
   static String firebasefirestoreHighToLow='HTL';
+
+  // roomBooking model const 
+  static String firebaseFireStoreUserId='userId';
+  static String firebaseFireStoreBookedDates='bookedDates';
+  static String firebaseFireStoreBookingDeatails='bookingDeatails';
+  static String firebaseFireStoreBookingTime='bookingTime';
+  static String firebaseFireStoreBookingPending='pending';
+  
 }
 
 

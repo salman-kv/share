@@ -1,31 +1,27 @@
-
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:share/user/domain/functions/user_firestroe_funciton.dart';
-import 'package:share/user/domain/functions/user_function.dart';
+
 
 class Alerts {
-  dialgForDelete(
-      {required BuildContext context,
-      String? hotelId,
-      String? roomId,
-      required String type,}) {
+  dialgForDelete({required BuildContext context, required Function function,String text='agree or not'}) {
+    log('${function}');
     return showDialog(
         context: context,
         builder: (ctx) {
-          String? dialog;
+          // String? di/alog;
           // if (roomModel != null) {
           //   dialog =
           //       'Do you want to remove ${roomModel.roomNumber} room from ${roomModel.hotelName}';
           // } else if (propertyModel != null) {
           //   dialog =
           //       'Do you want to remove  " ${propertyModel.propertyNmae} "  this property';
-          
-          // } else 
-          if (type == 'logOut') {
-            dialog =
-                'Do you want to LogOut';
-          }
+
+          // } else
+          // if (type == 'logOut') {
+          //   dialog =
+          //       'Do you want to LogOut';
+          // }
           return AlertDialog(
             backgroundColor: const Color.fromARGB(255, 238, 237, 235),
             shape:
@@ -41,7 +37,7 @@ class Alerts {
                   height: 15,
                 ),
                 Text(
-                  dialog.toString(),
+                  text,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displayMedium,
                 ),
@@ -61,9 +57,8 @@ class Alerts {
                   )),
               TextButton(
                   onPressed: () async {
-                    if(type=='logOut'){
-                      UserFireStroreFunction().userLogOut(context);
-                    }
+                    function(context);
+                    // UserFireStroreFunction().userLogOut(context);
                   },
                   child: Text(
                     'Yes',

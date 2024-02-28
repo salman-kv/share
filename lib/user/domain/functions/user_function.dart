@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class UserFunction {
   // user pick image and send the path of image
@@ -30,6 +31,16 @@ class UserFunction {
   }
 
 
+// copy with function for removing the time
+
+removingTimeFromDatetime({required DateTime dateTime}){
+    return dateTime.copyWith(hour: 0, minute: 0, second: 0,millisecond: 0,microsecond: 0);
+  }
+
+// convert datetime to date only 
+dateTimeToDateOnly({required DateTime dateTime}){
+  return DateFormat('d MMMM yyyy').format(dateTime);
+}
 
 
 }

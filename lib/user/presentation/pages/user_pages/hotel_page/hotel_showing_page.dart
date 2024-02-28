@@ -7,7 +7,6 @@ import 'package:share/user/aplication/hotel_bloc/hotel_bloc.dart';
 import 'package:share/user/aplication/hotel_bloc/hotel_event.dart';
 import 'package:share/user/aplication/hotel_bloc/hotel_state.dart';
 import 'package:share/user/domain/enum/hotel_type.dart';
-import 'package:share/user/presentation/const/const_color.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';
 
 class HotelShowingPage extends StatelessWidget {

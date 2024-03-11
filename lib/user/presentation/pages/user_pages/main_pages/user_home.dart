@@ -19,9 +19,6 @@ class UserHome extends StatelessWidget {
         CommonWidget().customSearchBar(context),
         Column(
           children: [
-            // Visibility(
-            //   visible: context.watch<SearchBloc>().visibility,
-            //   child:
                Column(
                 children: [
                   CommonWidget().categoryList(context), 
@@ -71,7 +68,7 @@ class UserHome extends StatelessWidget {
                         BlocProvider.of<SearchBloc>(context)
                             .listRoomModel
                             .length, (index) {
-                      return CommonWidget().romShowingContainer(
+                      return CommonWidget().roomShowingContainer(
                           context: context,
                           roomModel: BlocProvider.of<SearchBloc>(context)
                               .listRoomModel[index]);

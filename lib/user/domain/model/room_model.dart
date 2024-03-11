@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -31,8 +30,7 @@ class RoomModel {
       required this.roomType,
       required this.latlng,
       required this.place,
-      this.id
-      });
+      this.id});
 
   static Map<String, dynamic> toMap(RoomModel roomModel) {
     return {
@@ -46,17 +44,21 @@ class RoomModel {
       FirebaseFirestoreConst.firebaseFireStoreRoomImages: roomModel.images,
       FirebaseFirestoreConst.firebaseFireStoreRoomAvailability:
           roomModel.availability,
-          FirebaseFirestoreConst.firebaseFireStoreHotelType:roomModel.roomType.toString(),
-     FirebaseFirestoreConst.firebaseFireStoreHotelLatLng: {
+      FirebaseFirestoreConst.firebaseFireStoreHotelType:
+          roomModel.roomType.toString(),
+      FirebaseFirestoreConst.firebaseFireStoreHotelLatLng: {
         'latitude': roomModel.latlng!.latitude,
         'longitude': roomModel.latlng!.longitude
       },
-      FirebaseFirestoreConst.firebaseFireStoreHotelPlace:roomModel.place,
+      FirebaseFirestoreConst.firebaseFireStoreHotelPlace: roomModel.place,
     };
   }
 
-  static RoomModel fromMap(Map<String, dynamic> map,String id) {
-    // log('${map}');
+  static RoomModel fromMap(Map<String, dynamic> map, String id) {
+    print('mapping');
+    print('${map}');
+    print('${id}');
+
     HotelType hotelType;
     if (map[FirebaseFirestoreConst.firebaseFireStoreHotelType] ==
         'HotelType.hotel') {
@@ -77,8 +79,7 @@ class RoomModel {
         roomType: hotelType,
         latlng: LatLng(map['latlng']['latitude'], map['latlng']['longitude']),
         place: map[FirebaseFirestoreConst.firebaseFireStoreHotelPlace],
-        id: id
-        );
+        id: id);
   }
 }
 

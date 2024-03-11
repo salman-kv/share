@@ -16,10 +16,12 @@ class UserModel {
       required this.name,
       required this.password,
       required this.phone,
-      required this.imagePath});
+      required this.imagePath,  
+      });
 
   Map<String, dynamic> toMap() {
     return {
+      "userId":userId,
       "email": email,
       "name": name,
       "password": password,

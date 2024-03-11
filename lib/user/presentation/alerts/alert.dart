@@ -1,27 +1,18 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
+import 'package:share/user/aplication/room_bookin_bloc/room_booking_event.dart';
+import 'package:share/user/domain/model/room_booking_model.dart';
 
 
 class Alerts {
-  dialgForDelete({required BuildContext context, required Function function,String text='agree or not'}) {
-    log('${function}');
-    return showDialog(
+  dialgForDelete({required BuildContext context,Function? function,String text='agree or not',RoomBookingModel? roomBookingModel}) async{
+    bool val=false;
+    await showDialog(
         context: context,
         builder: (ctx) {
-          // String? di/alog;
-          // if (roomModel != null) {
-          //   dialog =
-          //       'Do you want to remove ${roomModel.roomNumber} room from ${roomModel.hotelName}';
-          // } else if (propertyModel != null) {
-          //   dialog =
-          //       'Do you want to remove  " ${propertyModel.propertyNmae} "  this property';
-
-          // } else
-          // if (type == 'logOut') {
-          //   dialog =
-          //       'Do you want to LogOut';
-          // }
           return AlertDialog(
             backgroundColor: const Color.fromARGB(255, 238, 237, 235),
             shape:
@@ -57,8 +48,22 @@ class Alerts {
                   )),
               TextButton(
                   onPressed: () async {
-                    function(context);
-                    // UserFireStroreFunction().userLogOut(context);
+                    if(text=='Cancel the room'){
+                      log('cancel if working');
+                      log('${roomBookingModel}');
+                      BlocProvider.of<RoomBookingBloc>(context)
+                                        .add(
+                                      OnDeleateRoomBooking(
+                                        roomBookingModel: roomBookingModel!,
+                                          bookingId: roomBookingModel.bookingId!,
+                                          userId:roomBookingModel.userId,),
+                                    );
+                                    Navigator.of(context).pop();
+                                    val=true;
+                    }
+                    else{
+                      function!(context);
+                    }
                   },
                   child: Text(
                     'Yes',
@@ -70,5 +75,6 @@ class Alerts {
             ],
           );
         });
+        return val;
   }
 }

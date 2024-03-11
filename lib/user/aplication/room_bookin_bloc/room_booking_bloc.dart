@@ -1,10 +1,16 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_event.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_state.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/functions/user_function.dart';
+import 'package:share/user/domain/model/checkin_checkout_model.dart';
+import 'package:share/user/presentation/alerts/alert.dart';
+import 'package:share/user/presentation/alerts/snack_bars.dart';
+import 'package:share/user/presentation/pages/payment_page/payment_page.dart';
 
 class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
   DateTime? startingDate;
@@ -27,22 +33,62 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
         if (instance
             .data()![FirebaseFirestoreConst.firebaseFireStoreBookingDeatails]
             .isNotEmpty) {
-          for (Map<String, dynamic> bookedDate in instance.data()![
-              FirebaseFirestoreConst.firebaseFireStoreBookingDeatails]) {
-            log('${bookedDate[FirebaseFirestoreConst.firebaseFireStoreBookedDates]['start']}');
-            for (DateTime i = DateTime.fromMillisecondsSinceEpoch(bookedDate[
-                            FirebaseFirestoreConst
-                                .firebaseFireStoreBookedDates]['start']
-                        .seconds *
-                    1000);
-                i.isBefore(DateTime.fromMillisecondsSinceEpoch(bookedDate[
-                            FirebaseFirestoreConst
-                                .firebaseFireStoreBookedDates]['end']
-                        .seconds *
-                    1000));
-                i = i.add(const Duration(days: 1))) {
-              unSelectedStartingDate.add(i);
-              unSelectedEndingDate.add(i.add(const Duration(days: 1)));
+          if (instance
+                  .data()![FirebaseFirestoreConst.firebaseFireStoreHotelType] ==
+              'HotelType.hotel') {
+            log('hotel');
+            for (Map<String, dynamic> bookedDate in instance.data()![
+                FirebaseFirestoreConst.firebaseFireStoreBookingDeatails]) {
+              log('${bookedDate[FirebaseFirestoreConst.firebaseFireStoreBookedDates]}');
+              log('${bookedDate[FirebaseFirestoreConst.firebaseFireStoreBookedDates]['start']}');
+              for (DateTime i = DateTime.fromMillisecondsSinceEpoch(bookedDate[
+                              FirebaseFirestoreConst
+                                  .firebaseFireStoreBookedDates]['start']
+                          .seconds *
+                      1000);
+                  i.isBefore(DateTime.fromMillisecondsSinceEpoch(bookedDate[
+                              FirebaseFirestoreConst
+                                  .firebaseFireStoreBookedDates]['end']
+                          .seconds *
+                      1000));
+                  i = i.add(const Duration(days: 1))) {
+                log('adding date');
+                unSelectedStartingDate.add(i);
+                unSelectedEndingDate.add(i.add(const Duration(days: 1)));
+              }
+            }
+          } else {
+            log('dormetory');
+            Map<DateTime, int> countingMap = {};
+            for (Map<String, dynamic> bookedDate in instance.data()![
+                FirebaseFirestoreConst.firebaseFireStoreBookingDeatails]) {
+              log('${bookedDate[FirebaseFirestoreConst.firebaseFireStoreBookedDates]}');
+              log('${bookedDate[FirebaseFirestoreConst.firebaseFireStoreBookedDates]['start']}');
+              for (DateTime i = DateTime.fromMillisecondsSinceEpoch(bookedDate[
+                              FirebaseFirestoreConst
+                                  .firebaseFireStoreBookedDates]['start']
+                          .seconds *
+                      1000);
+                  i.isBefore(DateTime.fromMillisecondsSinceEpoch(bookedDate[
+                              FirebaseFirestoreConst
+                                  .firebaseFireStoreBookedDates]['end']
+                          .seconds *
+                      1000));
+                  i = i.add(const Duration(days: 1))) {
+                countingMap[i] = (countingMap[i] ?? 0) + 1;
+              }
+            }
+            for (var val in countingMap.keys) {
+              if (countingMap[val] ==
+                  instance.data()![
+                      FirebaseFirestoreConst.firebaseFireStoreNumberOfBed]) {
+                unSelectedStartingDate.add(val);
+                unSelectedEndingDate.add(
+                  val.add(
+                    const Duration(days: 1),
+                  ),
+                );
+              }
             }
           }
         } else {
@@ -85,9 +131,6 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
       }
       if (checkDateBool) {
         endingDate = startingDate!.add(const Duration(days: 1));
-      } else {
-        emit(RoomBookingErrorState(
-            text: 'Alredy Booked on these dates , please select another date'));
       }
       emit(RoomBookingStartingPickedState());
     });
@@ -119,22 +162,29 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
         if (!checkDateBool) {
           endingDate =
               UserFunction().removingTimeFromDatetime(dateTime: event.endDate);
-        } else {
-          emit(RoomBookingErrorState(
-              text:
-                  'Alredy Booked on these dates , please select another date'));
         }
-      } else {
-        emit(RoomBookingErrorState(
-            text: 'Select a date after the selected starting date'));
       }
       emit(RoomBookingStartingPickedState());
     });
     on<OnClickRoomBookingPayButton>((event, emit) async {
       log('${event.roomBookingModel.toMap()}');
 
+      // adding booking detailes to the user sub collection
+      var userInstance = FirebaseFirestore.instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection);
+      var result = await userInstance
+          .doc(event.roomBookingModel.userId)
+          .collection(FirebaseFirestoreConst
+              .firebaseFireStoreCurrentBookedRoomCollection)
+          .add(event.roomBookingModel.toMap());
+      event.roomBookingModel.bookingId = result.id;
+      await userInstance
+          .doc(event.roomBookingModel.userId)
+          .collection(FirebaseFirestoreConst
+              .firebaseFireStoreCurrentBookedRoomCollection)
+          .doc(result.id)
+          .update(event.roomBookingModel.toMap());
       // adding room booking deatails to the room stored page
-
       CollectionReference<Map<String, dynamic>> roomInstance = FirebaseFirestore
           .instance
           .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection);
@@ -142,15 +192,199 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
         FirebaseFirestoreConst.firebaseFireStoreBookingDeatails:
             FieldValue.arrayUnion([event.roomBookingModel.toMap()])
       });
+      log('addeed successs');
+      startingDate = null;
+      endingDate = null;
+      emit(RoomBookingSuccessState());
+      log('vannne-----------------');
+    });
+    on<OnClickRoomBookingAndPayAtHotel>((event, emit) async {
       // adding booking detailes to the user sub collection
+      var userInstance = FirebaseFirestore.instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection);
+      var result = await userInstance
+          .doc(event.roomBookingModel.userId)
+          .collection(FirebaseFirestoreConst
+              .firebaseFireStoreCurrentBookingAndPayAtHotelRoomCollection)
+          .add(event.roomBookingModel.toMap());
+      event.roomBookingModel.bookingId = result.id;
+      await userInstance
+          .doc(event.roomBookingModel.userId)
+          .collection(FirebaseFirestoreConst
+              .firebaseFireStoreCurrentBookingAndPayAtHotelRoomCollection)
+          .doc(result.id)
+          .update(event.roomBookingModel.toMap());
+      // adding room booking deatails to the room stored page
+      CollectionReference<Map<String, dynamic>> roomInstance = FirebaseFirestore
+          .instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection);
+      await roomInstance.doc(event.roomBookingModel.roomId).update({
+        FirebaseFirestoreConst.firebaseFireStoreBookingDeatails:
+            FieldValue.arrayUnion([event.roomBookingModel.toMap()])
+      });
+      log('addeed successs');
+      startingDate = null;
+      endingDate = null;
+      emit(RoomBookingSuccessState());
+    });
+    on<OnCheckInClicked>((event, emit) async {
+      // updating checkincheckout on user side
       var userInstance = FirebaseFirestore.instance
           .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection);
       await userInstance
           .doc(event.roomBookingModel.userId)
+          .collection(FirebaseFirestoreConst
+              .firebaseFireStoreCurrentBookedRoomCollection)
+          .doc(event.roomBookingModel.bookingId)
+          .update({
+        FirebaseFirestoreConst.firebaseFireStoreCheckInORcheckOutDeatails:
+            event.checkInCheckOutModel.toMap()
+      });
+      CollectionReference<Map<String, dynamic>> roomInstance = FirebaseFirestore
+          .instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection);
+      DocumentSnapshot<Map<String, dynamic>> data =
+          await roomInstance.doc(event.roomBookingModel.roomId).get();
+      if (data.data()!.isNotEmpty) {
+        List<dynamic> list = data
+            .data()![FirebaseFirestoreConst.firebaseFireStoreBookingDeatails];
+        log('${list.length}');
+        for (int i = 0; i < list.length; i++) {
+          if (list[i][FirebaseFirestoreConst.firebaseFireStoreBookingId] ==
+              event.roomBookingModel.bookingId) {
+            log('booking id is same');
+            list.removeAt(i);
+            break;
+          }
+        }
+        log('${list.length}----------------');
+        event.roomBookingModel.checkInCheckOutModel =
+            event.checkInCheckOutModel;
+        list.add(event.roomBookingModel.toMap());
+        log('${list.length}');
+        await roomInstance.doc(event.roomBookingModel.roomId).update(
+            {FirebaseFirestoreConst.firebaseFireStoreBookingDeatails: list});
+      }
+      emit(RoomBookingUpdatesSuccessState());
+    });
+    on<OnCheckOutClicked>((event, emit) async {
+      // updating checkincheckout to checkoutwaiting on user side
+      var userInstance = FirebaseFirestore.instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection);
+      var data = await userInstance
+          .doc(event.roomBookingModel.userId)
+          .collection(FirebaseFirestoreConst.firebaseFireStoreCurrentUserRoom)
+          .where(FirebaseFirestoreConst.firebaseFireStoreBookingId,
+              isEqualTo: event.roomBookingModel.bookingId)
+          .get();
+      CheckInCheckOutModel checkInCheckOutModel = CheckInCheckOutModel.fromMap(
+          data.docs[0].data()[FirebaseFirestoreConst
+              .firebaseFireStoreCheckInORcheckOutDeatails]);
+      checkInCheckOutModel.request = FirebaseFirestoreConst
+          .firebaseFireStoreCheckInORcheckOutRequestForCheckOutWaiting;
+      // updating the new checkincheckout model
+      await userInstance
+          .doc(event.roomBookingModel.userId)
+          .collection(FirebaseFirestoreConst.firebaseFireStoreCurrentUserRoom)
+          .doc(data.docs[0].id)
+          .update({
+        FirebaseFirestoreConst.firebaseFireStoreCheckInORcheckOutDeatails:
+            checkInCheckOutModel.toMap()
+      });
+      //
+      var currentUserCheckInRoom = await FirebaseFirestore.instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection)
+          .doc(event.roomBookingModel.roomId)
           .collection(
-              FirebaseFirestoreConst.firebaseFireStoreCurrentBookedRoomCollection)
-          .add(event.roomBookingModel.toMap());
-      log('vannne-----------------');
+              FirebaseFirestoreConst.firebaseFireStoreCurrentUserCheckInRoom)
+          .where(FirebaseFirestoreConst.firebaseFireStoreBookingId,
+              isEqualTo: event.roomBookingModel.bookingId)
+          .get();
+      var currentUserCheckInRoomId = currentUserCheckInRoom.docs[0].id;
+      await FirebaseFirestore.instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection)
+          .doc(event.roomBookingModel.roomId)
+          .collection(
+              FirebaseFirestoreConst.firebaseFireStoreCurrentUserCheckInRoom)
+          .doc(currentUserCheckInRoomId)
+          .update({
+        FirebaseFirestoreConst.firebaseFireStoreCheckInORcheckOutDeatails:
+            checkInCheckOutModel.toMap()
+      });
+    });
+    on<OnDeleateRoomBooking>((event, emit) async {
+      CollectionReference<Map<String, dynamic>> roomInstance = FirebaseFirestore
+          .instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection);
+      await roomInstance
+          .doc(event.roomBookingModel.roomId)
+          .get()
+          .then((value) async {
+        for (Map<String, dynamic> i in value
+            .data()![FirebaseFirestoreConst.firebaseFireStoreBookingDeatails]) {
+          if (i[FirebaseFirestoreConst.firebaseFireStoreBookingId] ==
+              event.bookingId) {
+            roomInstance.doc(event.roomBookingModel.roomId).update({
+              FirebaseFirestoreConst.firebaseFireStoreBookingDeatails:
+                  FieldValue.arrayRemove([i])
+            });
+          }
+        }
+      });
+
+      var userInstance = FirebaseFirestore.instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection);
+      await userInstance
+          .doc(event.userId)
+          .collection(FirebaseFirestoreConst
+              .firebaseFireStoreCurrentBookingAndPayAtHotelRoomCollection)
+          .doc(event.bookingId)
+          .delete();
+      emit(RoomBookingDeletedState());
+    });
+    // cancel room booking
+    on<OnCancelRoomBooking>((event, emit) async{
+     var a=await Alerts().dialgForDelete(
+        roomBookingModel: event.roomBookingModel,
+        context: event.context,
+        text: event.text,
+      );
+     if(a){
+      emit(RoomBookingCancelSuccessState());
+     }
+    });
+    // on navigate pay button
+    on<OnNavigateByPayNoeButton>((event, emit){
+      if(startingDate!=null){
+        Navigator.of(event.mainContext).push(MaterialPageRoute(
+              builder: (_) {
+                return PaymentScreen(
+                  mainContext: event.mainContext,
+                  price: event.price,
+                );
+              },
+            ));
+      }
+      else{
+        emit(RoomBookingErrorState(text: 'Please select a date'));
+      }
+    });
+    // to press and check pay at hotel
+    on<OnCkeckToPressBookNowAndPayAtHotel>((event, emit) {
+      if(startingDate==null){
+        emit(RoomBookingErrorState(text: 'Please select a date'));
+      }else{
+        DateTime today=DateTime.now();
+        if(startingDate!.month==today.month && startingDate!.day==today.day){
+          emit(RoomBookingBookNowAndPayAtHotelSuccessState());
+        }else{
+          emit(RoomBookingErrorState(text: 'You can only use this option for todays booking'));
+        }
+      }
+    
+
+        log('${DateTime.now()!.month}');
+      
     });
   }
 }

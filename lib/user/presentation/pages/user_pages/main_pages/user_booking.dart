@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
@@ -14,7 +13,6 @@ class UserBookingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('Uset booking page loaded');
     return SafeArea(
         child: Scaffold(
       body: ListView(
@@ -28,7 +26,9 @@ class UserBookingPage extends StatelessWidget {
                               .firebaseFireStoreUserCollection)
                           .doc(BlocProvider.of<UserLoginBloc>(context).userId)
                           .collection(FirebaseFirestoreConst
-                              .firebaseFireStoreCurrentBookedRoomCollection)
+                              .firebaseFireStoreCurrentBookingAndPayAtHotelRoomCollection)
+                          .orderBy(FirebaseFirestoreConst
+                              .firebaseFireStoreBookingTime)
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
@@ -37,18 +37,22 @@ class UserBookingPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                   padding: const EdgeInsets.symmetric(horizontal:15),
-                                  child:  Text('Pending payment',style: Theme.of(context).textTheme.titleMedium,),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: Text(
+                                    'Pending payment',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
                                 ),
                                 Column(
                                   children: List.generate(
                                       snapshot.data!.docs.length, (index) {
                                     log('${snapshot.data!.docs[index].data()}');
-                                    return snapshot.data!.docs[index]
-                                                [
+                                    return snapshot.data!.docs[index][
                                                 FirebaseFirestoreConst
-                                                    .firebaseFireStoreBookingPending] ==
-                                            true
+                                                    .firebaseFireStorePaymentModel] ==
+                                            null
                                         ? RoomBookingWidget()
                                             .bookingPendingRoom(
                                                 roomBookingModel:
@@ -56,7 +60,9 @@ class UserBookingPage extends StatelessWidget {
                                                         snapshot
                                                             .data!.docs[index]
                                                             .data()),
-                                                context: context)
+                                                context: context,
+                                                bookingId: snapshot
+                                                    .data!.docs[index].id)
                                         : const SizedBox();
                                   }),
                                 ),
@@ -83,6 +89,8 @@ class UserBookingPage extends StatelessWidget {
                           .doc(BlocProvider.of<UserLoginBloc>(context).userId)
                           .collection(FirebaseFirestoreConst
                               .firebaseFireStoreCurrentBookedRoomCollection)
+                          .orderBy(FirebaseFirestoreConst
+                              .firebaseFireStoreBookingTime)
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
@@ -90,17 +98,22 @@ class UserBookingPage extends StatelessWidget {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal:15),
-                                  child: Text('Booked room',style: Theme.of(context).textTheme.titleMedium,),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: Text(
+                                    'Booking',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
                                 ),
                                 Column(
                                   children: List.generate(
                                       snapshot.data!.docs.length, (index) {
                                     return snapshot.data!.docs[index][
                                                 FirebaseFirestoreConst
-                                                    .firebaseFireStoreBookingPending] ==
-                                            false
+                                                    .firebaseFireStorePaymentModel] !=
+                                            null
                                         ? RoomBookingWidget()
                                             .bookingConfirmedRoom(
                                                 roomBookingModel:

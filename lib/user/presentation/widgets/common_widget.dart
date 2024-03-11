@@ -1,31 +1,21 @@
 import 'dart:developer';
-import 'dart:ffi';
-
-import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:share/user/aplication/filter_bloc/filter_bloc.dart';
 import 'package:share/user/aplication/filter_bloc/filter_event.dart';
 import 'package:share/user/aplication/filter_bloc/filter_state.dart';
 import 'package:share/user/aplication/hotel_bloc/hotel_bloc.dart';
-import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
-import 'package:share/user/aplication/room_bookin_bloc/room_booking_event.dart';
-import 'package:share/user/aplication/room_bookin_bloc/room_booking_state.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_event.dart';
 import 'package:share/user/aplication/search_bloc/search_state.dart';
-import 'package:share/user/aplication/singel_room_bloc/single_room_bloc.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/enum/hotel_type.dart';
 import 'package:share/user/domain/functions/user_firestroe_funciton.dart';
-import 'package:share/user/domain/functions/user_function.dart';
 import 'package:share/user/domain/model/main_property_model.dart';
-import 'package:share/user/domain/model/room_booking_model.dart';
 import 'package:share/user/domain/model/room_model.dart';
 import 'package:share/user/presentation/alerts/alert.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
@@ -264,7 +254,7 @@ class CommonWidget {
 
 // single hotel showing page
 
-  romShowingContainer(
+  roomShowingContainer(
       {required BuildContext context, required RoomModel roomModel}) {
     // List<dynamic> tempImages = [];
     return GestureDetector(
@@ -331,11 +321,11 @@ class CommonWidget {
                     )
                   ],
                 ),
-                Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    child: Text(roomModel.roomNumber,
-                        style: Theme.of(context).textTheme.titleMedium)),
+                // Padding(
+                //     padding:
+                //         const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                //     child: Text(roomModel.roomNumber,
+                //         style: Theme.of(context).textTheme.titleMedium)),
                 Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

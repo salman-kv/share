@@ -10,6 +10,11 @@ class RoomBookingErrorState extends RoomBookingState{
 
   RoomBookingErrorState({required this.text});
 }
+class RoomBookingEventSuccessState extends RoomBookingState{
+  final String text;
+
+  RoomBookingEventSuccessState({required this.text});
+}
 class RoomBookingSuccessState extends RoomBookingState{}
 class RoomBookingCancelSuccessState extends RoomBookingState{} 
 class RoomBookingBookNowAndPayAtHotelSuccessState extends RoomBookingState{} 

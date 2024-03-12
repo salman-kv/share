@@ -18,6 +18,7 @@ class FirebaseFirestoreConst {
   static String firebaseFireStoreCurrentUserCheckInRoom='currentUserInRoom';
   static String firebaseFireStoreCurrentBookedRoomCollection='currentBookedRoomCollection';
   static String firebaseFireStoreCurrentBookingAndPayAtHotelRoomCollection='currentBookingAndPayAtHotelRoomCollection';
+    static String firebaseFireStoreRatingAndFeedback = 'ratingAndFeedback';
 
 
 
@@ -74,6 +75,18 @@ class FirebaseFirestoreConst {
   static String firebaseFireStoreCheckInORcheckOutRequestForCheckOutDone='checkOutDone';
   static String firebaseFireStoreCheckInORcheckOutDeatails='checkInCheckOutDeatails';
 
+  // notification
+static String firebaseFireStoreNotification='notification';
+static String firebaseFireStoreNotificationOpened='notificationOpened';
+static String firebaseFireStoreNotificationPurpose='notificationPurpose';
+static String firebaseFireStoreNotificationData='notificationData';
+static String firebaseFireStoreNotificationTime='notificationTime';
+static String firebaseFireStoreNotificationRoomBookingModel='notificationRoomBookingModel';
+
+
+// rating and feedback
+static String firebaseFireStoreRating='rating';
+static String firebaseFireStoreFeedback='feedback';
   
 
 }

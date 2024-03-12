@@ -653,164 +653,175 @@ class RoomBookingWidget {
       required BuildContext context}) {
     return BlocProvider(
       create: (context) => RoomBookingBloc(),
-      child: GestureDetector(
-        onTap: () {
-          // Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-          //   return BlocProvider.value(
-          //     value: BlocProvider.of<RoomPropertyBloc>(context),
-          //     child: SingleRoomShowingPage(
-          //       roomId: roomId,
-          //       roomModel: roomModel,
-          //     ),
-          //   );
-          // }));
+      child: BlocConsumer<RoomBookingBloc, RoomBookingState>(
+        listener: (context, state) {
+          if(state is RoomBookingEventSuccessState){
+            log('-------');
+            SnackBars().notifyingSnackBar(state.text, context);
+          }
         },
-        child: Container(
-          margin: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [
-                ConstColor().mainColorblue.withOpacity(0.4),
-                ConstColor().main2Colorblue.withOpacity(0.2),
-              ]),
-              borderRadius: const BorderRadius.all(Radius.circular(20))),
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection(
-                    FirebaseFirestoreConst.firebaseFireStoreRoomCollection)
-                .doc(roomBookingModel.roomId)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        height: MediaQuery.of(context).size.width * 0.3,
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                            image: DecorationImage(
-                                image: NetworkImage(roomBookingModel.image),
-                                fit: BoxFit.fill)),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              snapshot.data!.data()![FirebaseFirestoreConst
-                                  .firebaseFireStoreHotelName],
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            Text(
-                              snapshot.data!
-                                  .data()![FirebaseFirestoreConst
-                                      .firebaseFireStoreRoomNumber]
-                                  .toString(),
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                            Text(
-                              '₹ ${roomBookingModel.price}',
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                            Column(
+        builder: (context, state) {
+          log('$state =============');
+          return GestureDetector(
+            onTap: () {},
+            child: Container(
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    ConstColor().mainColorblue.withOpacity(0.4),
+                    ConstColor().main2Colorblue.withOpacity(0.2),
+                  ]),
+                  borderRadius: const BorderRadius.all(Radius.circular(20))),
+              child: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection(
+                        FirebaseFirestoreConst.firebaseFireStoreRoomCollection)
+                    .doc(roomBookingModel.roomId)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            height: MediaQuery.of(context).size.width * 0.3,
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(20)),
+                                image: DecorationImage(
+                                    image: NetworkImage(roomBookingModel.image),
+                                    fit: BoxFit.fill)),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['start']!)}  1:00 PM',
+                                  snapshot.data!.data()![FirebaseFirestoreConst
+                                      .firebaseFireStoreHotelName],
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                                Text(
+                                  snapshot.data!
+                                      .data()![FirebaseFirestoreConst
+                                          .firebaseFireStoreRoomNumber]
+                                      .toString(),
                                   style: Theme.of(context).textTheme.titleSmall,
                                 ),
                                 Text(
-                                  'To',
-                                  textAlign: TextAlign.center,
+                                  '₹ ${roomBookingModel.price}',
                                   style: Theme.of(context).textTheme.titleSmall,
                                 ),
-                                Text(
-                                  '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['end']!)}  11:30 AM',
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
-                                DateTime.now().isAfter(roomBookingModel
-                                            .bookedDate['start']!
-                                            .add(const Duration(hours: 1))) &&
-                                        DateTime.now().isBefore(roomBookingModel
-                                            .bookedDate['end']!
-                                            .add(const Duration(hours: 11)))
-                                    ? Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
+                                Column(
+                                  children: [
+                                    Text(
+                                      '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['start']!)}  1:00 PM',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    ),
+                                    Text(
+                                      'To',
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    ),
+                                    Text(
+                                      '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['end']!)}  11:30 AM',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    ),
+                                    DateTime.now().isAfter(roomBookingModel
+                                                .bookedDate['start']!
+                                                .add(const Duration(
+                                                    hours: 1))) &&
+                                            DateTime.now().isBefore(roomBookingModel
+                                                .bookedDate['end']!
+                                                .add(const Duration(hours: 11)))
+                                        ? Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
                                                 0.04,
-                                        decoration:
-                                            Styles().elevatedButtonDecration(),
-                                        child: roomBookingModel
-                                                    .checkInCheckOutModel ==
-                                                null
-                                            ? ElevatedButton(
-                                                style: Styles()
-                                                    .elevatedButtonStyle(),
-                                                onPressed: () {
-                                                  BlocProvider.of<
-                                                              RoomBookingBloc>(
-                                                          context)
-                                                      .add(OnCheckInClicked(
-                                                          checkInCheckOutModel:
-                                                              CheckInCheckOutModel(
-                                                                  checkOutTime:
-                                                                      null,
-                                                                  checkInTime:
-                                                                      null,
-                                                                  request:
-                                                                      FirebaseFirestoreConst
-                                                                          .firebaseFireStoreCheckInORcheckOutRequestForCheckInWaiting),
-                                                          roomBookingModel:
-                                                              roomBookingModel));
-                                                },
-                                                child: Text(
-                                                  'CheckIn Now',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleSmall!
-                                                      .copyWith(
-                                                          color: Colors.white),
-                                                ))
-                                            : Center(
-                                                child: Text(
-                                                'waiting for confirmation',
-                                                textAlign: TextAlign.center,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleSmall!
-                                                    .copyWith(
-                                                        color: Colors.white),
-                                              )))
-                                    : Text(
-                                        '( CheckIn on ${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['start']!)} )',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .displaySmall!
-                                            .copyWith(
-                                                fontSize: 12,
-                                                color: const Color.fromARGB(
-                                                    255, 123, 123, 123)),
-                                      )
+                                            decoration: Styles()
+                                                .elevatedButtonDecration(),
+                                            child: roomBookingModel
+                                                        .checkInCheckOutModel ==
+                                                    null
+                                                ? ElevatedButton(
+                                                    style: Styles().elevatedButtonStyle(),
+                                                    onPressed: () {
+                                                      BlocProvider.of<
+                                                                  RoomBookingBloc>(
+                                                              context)
+                                                          .add(OnCheckInClicked(
+                                                              checkInCheckOutModel:
+                                                                  CheckInCheckOutModel(
+                                                                      checkOutTime:
+                                                                          null,
+                                                                      checkInTime:
+                                                                          null,
+                                                                      request:
+                                                                          FirebaseFirestoreConst
+                                                                              .firebaseFireStoreCheckInORcheckOutRequestForCheckInWaiting),
+                                                              roomBookingModel:
+                                                                  roomBookingModel));
+                                                    },
+                                                    child: Text(
+                                                      'CheckIn Now',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleSmall!
+                                                          .copyWith(
+                                                              color:
+                                                                  Colors.white),
+                                                    ))
+                                                : Center(
+                                                    child: Text(
+                                                    'waiting for confirmation',
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleSmall!
+                                                        .copyWith(
+                                                            color:
+                                                                Colors.white),
+                                                  )))
+                                        : Text(
+                                            '( CheckIn on ${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['start']!)} )',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .displaySmall!
+                                                .copyWith(
+                                                    fontSize: 12,
+                                                    color: const Color.fromARGB(
+                                                        255, 123, 123, 123)),
+                                          )
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              } else {
-                return const CircularProgressIndicator();
-              }
-            },
-          ),
-        ),
+                          ),
+                        )
+                      ],
+                    );
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }

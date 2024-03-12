@@ -6,8 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_event.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_state.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
+import 'package:share/user/domain/functions/notification_function.dart';
 import 'package:share/user/domain/functions/user_function.dart';
 import 'package:share/user/domain/model/checkin_checkout_model.dart';
+import 'package:share/user/domain/model/notification_model.dart';
 import 'package:share/user/presentation/alerts/alert.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/pages/payment_page/payment_page.dart';
@@ -167,7 +169,56 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
       emit(RoomBookingStartingPickedState());
     });
     on<OnClickRoomBookingPayButton>((event, emit) async {
-      log('${event.roomBookingModel.toMap()}');
+      emit(RoomBookingLoadingState());
+      // add money to the subadmin wallet
+      await FirebaseFirestore.instance
+          .collection(
+              FirebaseFirestoreConst.firebaseFireStoreSubAdminCollection)
+          .get()
+          .then((value) async {
+        for (var i in value.docs) {
+          if (i.data().containsKey('hotel')) {
+            if (i.data()['hotel'].contains(event.roomBookingModel.hotelId)) {
+              var subAdminData = await FirebaseFirestore.instance
+                  .collection(FirebaseFirestoreConst
+                      .firebaseFireStoreSubAdminCollection)
+                  .doc(i.id)
+                  .get();
+              // add to notification
+              NotificationModel notificationModel = NotificationModel(
+                  opened: false,
+                  notificationTime: DateTime.now(),
+                  notificationPurpose: 'Room Booked',
+                  notificationData: 'Room booked and pay via online',
+                  roomBookingModel: event.roomBookingModel);
+              await FirebaseFirestore.instance
+                  .collection(FirebaseFirestoreConst
+                      .firebaseFireStoreSubAdminCollection)
+                  .doc(i.id)
+                  .collection(
+                      FirebaseFirestoreConst.firebaseFireStoreNotification)
+                  .add(notificationModel.toMap());
+              //
+              if (subAdminData.data()!.containsKey("walletPrice")) {
+                await FirebaseFirestore.instance
+                    .collection(FirebaseFirestoreConst
+                        .firebaseFireStoreSubAdminCollection)
+                    .doc(i.id)
+                    .update({
+                  "walletPrice":
+                      subAdminData["walletPrice"] + event.roomBookingModel.price
+                });
+              } else {
+                await FirebaseFirestore.instance
+                    .collection(FirebaseFirestoreConst
+                        .firebaseFireStoreSubAdminCollection)
+                    .doc(i.id)
+                    .update({"walletPrice": event.roomBookingModel.price});
+              }
+            }
+          }
+        }
+      });
 
       // adding booking detailes to the user sub collection
       var userInstance = FirebaseFirestore.instance
@@ -199,6 +250,13 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
       log('vannne-----------------');
     });
     on<OnClickRoomBookingAndPayAtHotel>((event, emit) async {
+      // add notification
+      await NotificationFunction().notificationFunction(
+          roomBookingModel: event.roomBookingModel,
+          notificationPurpose: 'Room Booking',
+          notificationData:
+              'Room booked Without payment');
+
       // adding booking detailes to the user sub collection
       var userInstance = FirebaseFirestore.instance
           .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection);
@@ -228,6 +286,13 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
       emit(RoomBookingSuccessState());
     });
     on<OnCheckInClicked>((event, emit) async {
+      // check in notification 
+      await NotificationFunction().notificationFunction(
+          roomBookingModel: event.roomBookingModel,
+          notificationPurpose: 'Check in request',
+          notificationData:
+              'Check in request send by user');
+
       // updating checkincheckout on user side
       var userInstance = FirebaseFirestore.instance
           .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection);
@@ -265,9 +330,17 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
         await roomInstance.doc(event.roomBookingModel.roomId).update(
             {FirebaseFirestoreConst.firebaseFireStoreBookingDeatails: list});
       }
-      emit(RoomBookingUpdatesSuccessState());
+      emit(RoomBookingEventSuccessState(text: 'Check In request sended'));
     });
     on<OnCheckOutClicked>((event, emit) async {
+      emit(RoomBookingLoadingState());
+      // check out notification
+       await NotificationFunction().notificationFunction(
+          roomBookingModel: event.roomBookingModel,
+          notificationPurpose: 'Check out request',
+          notificationData:
+              'Check out request send by user');
+      
       // updating checkincheckout to checkoutwaiting on user side
       var userInstance = FirebaseFirestore.instance
           .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection);
@@ -311,8 +384,20 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
         FirebaseFirestoreConst.firebaseFireStoreCheckInORcheckOutDeatails:
             checkInCheckOutModel.toMap()
       });
+  emit(RoomBookingEventSuccessState(
+          text: 'checkout request send successfully'));
+    
     });
     on<OnDeleateRoomBooking>((event, emit) async {
+      // add notification
+       await NotificationFunction().notificationFunction(
+          roomBookingModel: event.roomBookingModel,
+          notificationPurpose: 'Room booking canceled',
+          notificationData:
+              'Room booking canceled by user');
+
+      
+            // cancel room booking 
       CollectionReference<Map<String, dynamic>> roomInstance = FirebaseFirestore
           .instance
           .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection);
@@ -343,48 +428,45 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
       emit(RoomBookingDeletedState());
     });
     // cancel room booking
-    on<OnCancelRoomBooking>((event, emit) async{
-     var a=await Alerts().dialgForDelete(
+    on<OnCancelRoomBooking>((event, emit) async {
+      var a = await Alerts().dialgForDelete(
         roomBookingModel: event.roomBookingModel,
         context: event.context,
         text: event.text,
       );
-     if(a){
-      emit(RoomBookingCancelSuccessState());
-     }
+      if (a) {
+        emit(RoomBookingCancelSuccessState());
+      }
     });
     // on navigate pay button
-    on<OnNavigateByPayNoeButton>((event, emit){
-      if(startingDate!=null){
+    on<OnNavigateByPayNoeButton>((event, emit) {
+      if (startingDate != null) {
         Navigator.of(event.mainContext).push(MaterialPageRoute(
-              builder: (_) {
-                return PaymentScreen(
-                  mainContext: event.mainContext,
-                  price: event.price,
-                );
-              },
-            ));
-      }
-      else{
+          builder: (_) {
+            return PaymentScreen(
+              mainContext: event.mainContext,
+              price: event.price,
+            );
+          },
+        ));
+      } else {
         emit(RoomBookingErrorState(text: 'Please select a date'));
       }
     });
     // to press and check pay at hotel
     on<OnCkeckToPressBookNowAndPayAtHotel>((event, emit) {
-      if(startingDate==null){
+      if (startingDate == null) {
         emit(RoomBookingErrorState(text: 'Please select a date'));
-      }else{
-        DateTime today=DateTime.now();
-        if(startingDate!.month==today.month && startingDate!.day==today.day){
+      } else {
+        DateTime today = DateTime.now();
+        if (startingDate!.month == today.month &&
+            startingDate!.day == today.day) {
           emit(RoomBookingBookNowAndPayAtHotelSuccessState());
-        }else{
-          emit(RoomBookingErrorState(text: 'You can only use this option for todays booking'));
+        } else {
+          emit(RoomBookingErrorState(
+              text: 'You can only use this option for todays booking'));
         }
       }
-    
-
-        log('${DateTime.now()!.month}');
-      
     });
   }
 }

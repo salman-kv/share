@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_event.dart';
+import 'package:share/user/aplication/room_bookin_bloc/room_booking_state.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
+import 'package:share/user/domain/functions/time_function.dart';
 import 'package:share/user/domain/functions/user_function.dart';
 import 'package:share/user/domain/model/room_booking_model.dart';
 import 'package:share/user/presentation/const/const_color.dart';
+import 'package:share/user/presentation/pages/booking_deatails/booking_deatails_page.dart';
+import 'package:share/user/presentation/pages/user_pages/rating_feedback/rating_and_feedback.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 
 class CurrentRoomWidget {
@@ -33,7 +37,7 @@ class CurrentRoomWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 5, bottom: 5),
+                        margin: const EdgeInsets.only(top: 5, bottom: 5),
                         height: 200,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
@@ -64,35 +68,50 @@ class CurrentRoomWidget {
                           ),
                           Expanded(
                               child: Text(
-                            '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.checkInCheckOutModel!.checkInTime!)} / ${roomBookingModel.checkInCheckOutModel!.checkInTime!.hour}:${roomBookingModel.checkInCheckOutModel!.checkInTime!.minute}',
+                            '${TimeFunction().toDateOnly(dateTime: roomBookingModel.checkInCheckOutModel!.checkInTime!)} - ${TimeFunction().toTimeOnly(dateTime: roomBookingModel.bookingTime)}',
                             style: Theme.of(context).textTheme.displayMedium,
                           ))
                         ],
                       ),
-                      Container(
-                        height: 50,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 5),
-                        margin: const EdgeInsets.symmetric(vertical: 5),
-                        decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 11, 1, 93),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Booking deatails',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(color: Colors.white),
-                            ),
-                            Icon(
-                              Icons.bookmark_outline,
-                              color: Colors.white,
-                              size: 30,
-                            )
-                          ],
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return BlocProvider.value(
+                                value:
+                                    BlocProvider.of<RoomBookingBloc>(context),
+                                child: BookingDeatailsPage(
+                                  roomBookingModel: roomBookingModel,
+                                ),
+                              );
+                            },
+                          ));
+                        },
+                        child: Container(
+                          height: 50,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 5),
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 11, 1, 93),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Booking deatails',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(color: Colors.white),
+                              ),
+                              const Icon(
+                                Icons.bookmark_outline,
+                                color: Colors.white,
+                                size: 30,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                       Container(
@@ -101,7 +120,7 @@ class CurrentRoomWidget {
                         margin: const EdgeInsets.symmetric(vertical: 5),
                         height: 50,
                         decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 11, 1, 93),
+                            color: const Color.fromARGB(255, 11, 1, 93),
                             borderRadius: BorderRadius.circular(10)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,7 +132,7 @@ class CurrentRoomWidget {
                                   .titleMedium!
                                   .copyWith(color: Colors.white),
                             ),
-                            Icon(
+                            const Icon(
                               Icons.chat,
                               color: Colors.white,
                               size: 30,
@@ -121,30 +140,37 @@ class CurrentRoomWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 5),
-                        margin: const EdgeInsets.symmetric(vertical: 5),
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 11, 1, 93),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Rating and feedback',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(color: Colors.white),
-                            ),
-                            Icon(
-                              Icons.rate_review_outlined,
-                              color: Colors.white,
-                              size: 30,
-                            )
-                          ],
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                            return RatingAndFeedback(roomBookingModel: roomBookingModel,);
+                          },));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 5),
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          height: 50,
+                          decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 11, 1, 93),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Rating and feedback',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(color: Colors.white),
+                              ),
+                              const Icon(
+                                Icons.rate_review_outlined,
+                                color: Colors.white,
+                                size: 30,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                       Row(
@@ -164,34 +190,46 @@ class CurrentRoomWidget {
                           ),
                         ],
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: roomBookingModel.checkInCheckOutModel!.request ==
-                                FirebaseFirestoreConst
-                                    .firebaseFireStoreCheckInORcheckOutRequestForCheckOutWaiting
-                            ?const Text('waiting for checkout')
-                            : Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.04,
-                                decoration: Styles().elevatedButtonDecration(),
-                                child: ElevatedButton(
-                                  style: Styles().elevatedButtonStyle(),
-                                  onPressed: () {
-                                    BlocProvider.of<RoomBookingBloc>(context)
-                                        .add(
-                                      OnCheckOutClicked(
-                                          roomBookingModel: roomBookingModel),
-                                    );
-                                  },
-                                  child: Text(
-                                    'Check Out Now',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall!
-                                        .copyWith(color: Colors.white),
-                                  ),
-                                ),
-                              ),
+                      BlocBuilder<RoomBookingBloc, RoomBookingState>(
+                        builder: (context, state) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: roomBookingModel
+                                          .checkInCheckOutModel!.request ==
+                                      FirebaseFirestoreConst
+                                          .firebaseFireStoreCheckInORcheckOutRequestForCheckOutWaiting
+                                  ? const Text('waiting for checkout')
+                                  : Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.04,
+                                      decoration:
+                                          Styles().elevatedButtonDecration(),
+                                      child: ElevatedButton(
+                                        style: Styles().elevatedButtonStyle(),
+                                        onPressed: () {
+                                          BlocProvider.of<RoomBookingBloc>(
+                                                  context)
+                                              .add(
+                                            OnCheckOutClicked(
+                                                roomBookingModel:
+                                                    roomBookingModel),
+                                          );
+                                        },
+                                        child:state is RoomBookingLoadingState ? const CircularProgressIndicator() : Text(
+                                          'Check Out Now',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall!
+                                              .copyWith(color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                          );
+                        },
                       )
                     ]),
               ),

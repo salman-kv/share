@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
@@ -7,9 +8,12 @@ import 'package:share/user/aplication/room_bookin_bloc/room_booking_state.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_bloc.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_event.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_state.dart';
+import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/enum/hotel_type.dart';
+import 'package:share/user/domain/model/rating_and_feedback_model.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';
+import 'package:share/user/presentation/widgets/rating_feedback_widget.dart';
 import 'package:share/user/presentation/widgets/room_booking_widget.dart';
 
 class RoomDeatailedShowingPage extends StatelessWidget {
@@ -31,7 +35,7 @@ class RoomDeatailedShowingPage extends StatelessWidget {
         ],
         child: BlocConsumer<RoomBookingBloc, RoomBookingState>(
           listener: (context, state) {
-             if(state is RoomBookingErrorState){
+            if (state is RoomBookingErrorState) {
               SnackBars().errorSnackBar(state.text, context);
             }
           },
@@ -209,52 +213,100 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                                   .watch<SingleRoomBloc>()
                                   .roomModel!
                                   .price),
-                          Row(
-                            children: [
-                              RoomBookingWidget().payNowButton(
-                                  context: context,
-                                  price: context
-                                              .watch<RoomBookingBloc>()
-                                              .startingDate !=
-                                          null
-                                      ? context
-                                              .watch<RoomBookingBloc>()
-                                              .endingDate!
-                                              .difference(BlocProvider.of<
-                                                      RoomBookingBloc>(context)
-                                                  .startingDate!)
-                                              .inDays *
-                                          BlocProvider.of<SingleRoomBloc>(
-                                                  context)
-                                              .roomModel!
-                                              .price
-                                      : BlocProvider.of<SingleRoomBloc>(context)
-                                          .roomModel!
-                                          .price),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.03,
-                              ),
-                              RoomBookingWidget().bookAndPayAtHotel(
-                                  context: context,
-                                  price: context
-                                              .watch<RoomBookingBloc>()
-                                              .startingDate !=
-                                          null
-                                      ? context
-                                              .watch<RoomBookingBloc>()
-                                              .endingDate!
-                                              .difference(BlocProvider.of<
-                                                      RoomBookingBloc>(context)
-                                                  .startingDate!)
-                                              .inDays *
-                                          BlocProvider.of<SingleRoomBloc>(
-                                                  context)
-                                              .roomModel!
-                                              .price
-                                      : BlocProvider.of<SingleRoomBloc>(context)
-                                          .roomModel!
-                                          .price),
-                            ],
+                          BlocBuilder<RoomBookingBloc, RoomBookingState>(
+                            builder: (context, state) {
+                              if (state is RoomBookingLoadingState) {
+                                return const SizedBox();
+                              } else {
+                                return Row(
+                                  children: [
+                                    RoomBookingWidget().payNowButton(
+                                        context: context,
+                                        price: context
+                                                    .watch<RoomBookingBloc>()
+                                                    .startingDate !=
+                                                null
+                                            ? context
+                                                    .watch<RoomBookingBloc>()
+                                                    .endingDate!
+                                                    .difference(BlocProvider.of<
+                                                                RoomBookingBloc>(
+                                                            context)
+                                                        .startingDate!)
+                                                    .inDays *
+                                                BlocProvider.of<SingleRoomBloc>(
+                                                        context)
+                                                    .roomModel!
+                                                    .price
+                                            : BlocProvider.of<SingleRoomBloc>(
+                                                    context)
+                                                .roomModel!
+                                                .price),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.03,
+                                    ),
+                                    RoomBookingWidget().bookAndPayAtHotel(
+                                        context: context,
+                                        price: context
+                                                    .watch<RoomBookingBloc>()
+                                                    .startingDate !=
+                                                null
+                                            ? context
+                                                    .watch<RoomBookingBloc>()
+                                                    .endingDate!
+                                                    .difference(BlocProvider.of<
+                                                                RoomBookingBloc>(
+                                                            context)
+                                                        .startingDate!)
+                                                    .inDays *
+                                                BlocProvider.of<SingleRoomBloc>(
+                                                        context)
+                                                    .roomModel!
+                                                    .price
+                                            : BlocProvider.of<SingleRoomBloc>(
+                                                    context)
+                                                .roomModel!
+                                                .price),
+                                  ],
+                                );
+                              }
+                            },
+                          ),
+                          Text(
+                            'Rating & Reviews',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection(FirebaseFirestoreConst
+                                    .firebaseFireStoreRoomCollection)
+                                .doc(roomId)
+                                .collection(FirebaseFirestoreConst
+                                    .firebaseFireStoreRatingAndFeedback)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data!.docs.isNotEmpty) {
+                                  return Column(
+                                    children: List.generate(
+                                        snapshot.data!.docs.length, (index) {
+                                      return RatingAndFeedbackWidget()
+                                          .ratingFeedbackContainer(
+                                              ratingAndFeedbackModel:
+                                                  RatingAndFeedbackModel
+                                                      .fromMap(snapshot
+                                                          .data!.docs[index]
+                                                          .data()));
+                                    }),
+                                  );
+                                } else {
+                                  return Text('doc emptu');
+                                }
+                              } else {
+                                return Text('no snapshort');
+                              }
+                            },
                           )
                         ],
                       ),

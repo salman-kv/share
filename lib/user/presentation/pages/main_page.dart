@@ -11,6 +11,7 @@ import 'package:share/user/presentation/pages/user_pages/main_pages/user_home.da
 import 'package:share/user/presentation/pages/user_pages/main_pages/user_map.dart';
 import 'package:share/user/presentation/pages/user_pages/main_pages/user_message.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';
+import 'package:share/user/presentation/widgets/notification_widget.dart';
 
 class MainPage extends StatelessWidget {
 
@@ -42,17 +43,10 @@ class MainPage extends StatelessWidget {
                       Icons.menu_outlined,
                       size: 30,
                     )),
-                actions: const [
-                  Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Icon(
-                      Icons.notifications_active_outlined,
-                      size: 28,
-                    ),
-                  )
+                actions:  [
+                  NotificationWidget().notificationButton(context: context)
                 ],
               ),
-              // body: screens[context.watch<SubAdminMainPageBloc>().index],
               body: userPages[context.watch<MainUserBloc>().index],
               drawer: CommonWidget().drawerReturnFunction(context),
               // drawer:CommonWidget().drawerReturnFunction(context),

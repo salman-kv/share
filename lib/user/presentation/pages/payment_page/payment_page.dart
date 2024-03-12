@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_event.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_bloc.dart';
@@ -10,7 +11,6 @@ import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/domain/model/payment_model.dart';
 import 'package:share/user/domain/model/room_booking_model.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
-
 class PaymentScreen extends StatefulWidget {
   PaymentScreen(
       {required this.mainContext,
@@ -87,10 +87,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    log('${response.data}');
-    log('${response.orderId}');
-    log('${response.paymentId}');
-    log('${response.signature}');
     if (widget.bookingId != null) {
       BlocProvider.of<RoomBookingBloc>(widget.mainContext).add(
           OnDeleateRoomBooking(

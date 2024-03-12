@@ -8,6 +8,7 @@ import 'package:share/user/aplication/room_bookin_bloc/room_booking_state.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/model/room_booking_model.dart';
+import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/widgets/current_room_widgets.dart';
 
 class UserCurrentPropertyPage extends StatelessWidget {
@@ -19,7 +20,9 @@ class UserCurrentPropertyPage extends StatelessWidget {
       create: (context) => RoomBookingBloc(),
       child: BlocConsumer<RoomBookingBloc, RoomBookingState>(
         listener: (context, state) {
-          
+          if (state is RoomBookingEventSuccessState) {
+            SnackBars().notifyingSnackBar(state.text, context);
+          }
         },
         builder: (context, state) {
           return StreamBuilder(

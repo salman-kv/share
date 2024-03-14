@@ -9,7 +9,7 @@ import 'package:share/user/domain/functions/time_function.dart';
 import 'package:share/user/domain/functions/user_function.dart';
 import 'package:share/user/domain/model/room_booking_model.dart';
 import 'package:share/user/presentation/const/const_color.dart';
-import 'package:share/user/presentation/pages/booking_deatails/booking_deatails_page.dart';
+import 'package:share/user/presentation/pages/user_pages/booking_deatails/booking_deatails_page.dart';
 import 'package:share/user/presentation/pages/user_pages/rating_feedback/rating_and_feedback.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 

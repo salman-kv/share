@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share/user/domain/model/user_model.dart';
 
 abstract class UserLoginEvent{}
 
@@ -26,6 +27,18 @@ class UserDeatailesAddingEvent extends UserLoginEvent{
   final BuildContext context;
 
   UserDeatailesAddingEvent({required this.userId, required this.context});
-
-  
 }
+class OnTapFavoriteEvent extends UserLoginEvent{
+  final String roomId;
+
+  OnTapFavoriteEvent({required this.roomId});
+}
+class OnProfileUpdatingState extends UserLoginEvent{
+  final String userName;
+  final String phone; 
+  final String imagePath;
+
+  OnProfileUpdatingState({required this.userName, required this.phone, required this.imagePath}); 
+
+}
+class OnImageUpdatingEvent extends UserLoginEvent{}

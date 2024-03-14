@@ -96,6 +96,7 @@ class UserFireStroreFunction {
         .doc(userId)
         .get();
     var a = UserModel(
+      favirote: val['favorite'],
         userId: userId,
         email: val['email'],
         name: val['name'],
@@ -199,7 +200,24 @@ BlocProvider.of<SearchBloc>(context).listRoomModel=data;
     }), (route) => false);
   }
 
-
+  // favirote adding function
+  favoriteLoading({required String userId})async{
+    log('keri===');
+    List<dynamic> favoriteRooms=[];
+    var favInstance= await FirebaseFirestore.instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection)
+          .doc(userId).get();
+          log('${favInstance.data()}');
+          
+          if(favInstance.data()![FirebaseFirestoreConst.firebaseFireStoreFavorite] !=null){
+            log('ooooooo');
+            for(var i in favInstance.data()![FirebaseFirestoreConst.firebaseFireStoreFavorite]){
+              log('ppppppppp');
+              favoriteRooms.add(i);
+            }
+          }
+          return favoriteRooms;
+  }
 }
 
 

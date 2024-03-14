@@ -3,11 +3,16 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share/user/aplication/rating_and_feedback/rating_and_feedback_bloc.dart';
+import 'package:share/user/aplication/rating_and_feedback/rating_and_feedback_event.dart';
+import 'package:share/user/aplication/rating_and_feedback/rating_and_feedback_state.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_state.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_bloc.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_event.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_state.dart';
+import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
+import 'package:share/user/aplication/user_login_bloc/user_login_event.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/enum/hotel_type.dart';
 import 'package:share/user/domain/model/rating_and_feedback_model.dart';
@@ -87,6 +92,7 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                               enlargeCenterPage: true,
                             ),
                           ),
+
                           Row(
                             children: [
                               Expanded(
@@ -103,14 +109,37 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                                           .textTheme
                                           .titleLarge,
                                     ),
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.favorite,
-                                        size: 30,
-                                        color: Colors.red,
-                                      ),
-                                      onPressed: () {},
-                                    )
+                                    context
+                                            .watch<UserLoginBloc>()
+                                            .favoriteRooms
+                                            .contains(roomId)
+                                        ? IconButton(
+                                            icon: const Icon(
+                                              Icons.favorite,
+                                              size: 30,
+                                              color: Colors.red,
+                                            ),
+                                            onPressed: () {
+                                              BlocProvider.of<UserLoginBloc>(
+                                                      context)
+                                                  .add(OnTapFavoriteEvent(
+                                                      roomId: roomId));
+                                            },
+                                          )
+                                        : IconButton(
+                                            icon: const Icon(
+                                              Icons.favorite,
+                                              size: 30,
+                                              color: Color.fromARGB(
+                                                  255, 202, 202, 202),
+                                            ),
+                                            onPressed: () {
+                                              BlocProvider.of<UserLoginBloc>(
+                                                      context)
+                                                  .add(OnTapFavoriteEvent(
+                                                      roomId: roomId));
+                                            },
+                                          )
                                   ],
                                 ),
                               ),
@@ -158,28 +187,28 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                                 .titleMedium!
                                 .copyWith(fontSize: 20),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.star,
-                                    size: 25,
-                                    color: Color.fromARGB(255, 230, 207, 5),
-                                  ),
-                                  Text(
-                                    // propertyModel.place,
-                                    '4.2 (250)',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall,
-                                  ),
-                                ],
-                              ),
-                              Text('view on Map')
-                            ],
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+                          //     Row(
+                          //       children: [
+                          //         const Icon(
+                          //           Icons.star,
+                          //           size: 25,
+                          //           color: Color.fromARGB(255, 230, 207, 5),
+                          //         ),
+                          //         Text(
+                          //           // propertyModel.place,
+                          //           '4.2 (250)',
+                          //           style: Theme.of(context)
+                          //               .textTheme
+                          //               .displaySmall,
+                          //         ),
+                          //       ],
+                          //     ),
+                          //     Text('view on Map')
+                          //   ],
+                          // ),
                           const SizedBox(
                             height: 10,
                           ),
@@ -273,6 +302,9 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                               }
                             },
                           ),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           Text(
                             'Rating & Reviews',
                             style: Theme.of(context).textTheme.titleMedium,
@@ -286,22 +318,87 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                                     .firebaseFireStoreRatingAndFeedback)
                                 .snapshots(),
                             builder: (context, snapshot) {
+                              BlocProvider.of<RatingAndFeedbackBloc>(context)
+                                  .add(OnTotalRatingCalculation(
+                                      snapshot: snapshot));
                               if (snapshot.hasData) {
                                 if (snapshot.data!.docs.isNotEmpty) {
-                                  return Column(
-                                    children: List.generate(
-                                        snapshot.data!.docs.length, (index) {
-                                      return RatingAndFeedbackWidget()
-                                          .ratingFeedbackContainer(
-                                              ratingAndFeedbackModel:
-                                                  RatingAndFeedbackModel
-                                                      .fromMap(snapshot
-                                                          .data!.docs[index]
-                                                          .data()));
-                                    }),
+                                  return BlocBuilder<RatingAndFeedbackBloc, RatingAndFeedbackState>(
+                                    builder: (context, state) {
+                                      return Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                BlocProvider.of<
+                                                            RatingAndFeedbackBloc>(
+                                                        context)
+                                                    .totalRatingAvarageStars
+                                                    .toStringAsFixed(2),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleLarge!
+                                                    .copyWith(fontSize: 35),
+                                              ),
+                                              Column(
+                                                children: [
+                                                  Row(
+                                                    children: List.generate(5,
+                                                        (index) {
+                                                      if (index <
+                                                          BlocProvider.of<
+                                                                      RatingAndFeedbackBloc>(
+                                                                  context)
+                                                              .totalRatingAvarageStars) {
+                                                        return const Icon(
+                                                          Icons.star,
+                                                          color: Colors.amber,
+                                                          size: 30,
+                                                        );
+                                                      } else {
+                                                        return const Icon(
+                                                          Icons.star_border,
+                                                          color: Colors.amber,
+                                                          size: 30,
+                                                        );
+                                                      }
+                                                    }),
+                                                  ),
+                                                  Text(
+                                                    '${BlocProvider.of<RatingAndFeedbackBloc>(context).totalEntries} Reviews',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleSmall,
+                                                  )
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                          Column(
+                                            children: List.generate(
+                                                snapshot.data!.docs.length,
+                                                (index) {
+                                              return RatingAndFeedbackWidget()
+                                                  .ratingFeedbackContainer(
+                                                      ratingAndFeedbackModel:
+                                                          RatingAndFeedbackModel
+                                                              .fromMap(snapshot
+                                                                  .data!
+                                                                  .docs[index]
+                                                                  .data()));
+                                            }),
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
                                 } else {
-                                  return Text('doc emptu');
+                                  return Text(
+                                    '(No reviews)',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displaySmall,
+                                  );
                                 }
                               } else {
                                 return Text('no snapshort');

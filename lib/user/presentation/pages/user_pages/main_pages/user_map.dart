@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:share/user/aplication/map_bloc/map_bloc.dart';
 import 'package:share/user/aplication/map_bloc/map_event.dart';
 import 'package:share/user/aplication/map_bloc/map_state.dart';
@@ -20,7 +20,7 @@ class UserMapPage extends StatelessWidget {
           if (state is MapInitialState) {
             BlocProvider.of<MapBloc>(context)
                 .add(OnFechHotelDeatailsEvent(context: context));
-            return  Center(
+            return Center(
               child: CommonWidget().loadingWidget(),
             );
           } else {
@@ -30,11 +30,14 @@ class UserMapPage extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Finding Rooms near by you . . .',
-                          style: Theme.of(context).textTheme.titleMedium,
+                        Lottie.asset('assets/images/glob loading.json'),
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Text(
+                            'Finding Rooms near by you . . .',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
                         ),
-                        CommonWidget().loadingWidget(),
                       ],
                     ),
                   )

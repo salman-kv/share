@@ -97,9 +97,9 @@ class UserSignUpMoreInfo extends StatelessWidget {
                         onChanged: (value) {
                           phoneKey.currentState!.validate();
                         },
-                        validator: (value) {
-                          if ((!RegExp(r'^[0-9]+\.?[0-9]*$').hasMatch(value!))) {
-                            return 'enter valid Phone number';
+                         validator: (value) {
+                          if ((!RegExp(r'^[0-9]+\.?[0-9]*$').hasMatch(value!) || value.length!=10)) {
+                            return 'enter valid 10 digit phone number';
                           } else {
                             return null;
                           }
@@ -123,11 +123,22 @@ class UserSignUpMoreInfo extends StatelessWidget {
                           passwordKey.currentState!.validate();
                         },
                         validator: (value) {
-                          if ((!RegExp(r'^\S+(?!\d+$)').hasMatch(value!))) {
-                            return 'enter valid password';
-                          } else {
+                          if (value!.length >= 6 && (value.contains(RegExp(r'[!@#$%^&*(),₹_.-]')))) {
                             return null;
                           }
+                           else if(!(value.length >= 6) && !(value.contains(RegExp(r'[!@#$%^&*(),.-]')))){
+                            return 'Add minimum 6 character\nAdd one special character';
+                          }
+                           else if(!(value.length >= 6)) {
+                            return 'Add minimum 6 character';
+                          }
+                          else if(!(value.contains(RegExp(r'[!@#$%^&*(),.-]')))){
+                            return 'Add one special character';
+                          }
+                          else{
+                            return null;
+                          }
+                         
                         },
                         controller: passwordController,
                         obscureText: true,
@@ -202,6 +213,7 @@ class UserSignUpMoreInfo extends StatelessWidget {
                                         OnVarifyUserDetailsEvent(
                                             userModel: UserModel(
                                                 // ignore: use_build_context_synchronously
+                                                favirote: [],
                                                 email: context
                                                     .read<UserSignUpBloc>()
                                                     .email!,

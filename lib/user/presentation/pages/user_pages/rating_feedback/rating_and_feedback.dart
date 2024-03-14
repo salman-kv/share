@@ -106,7 +106,7 @@ class RatingAndFeedback extends StatelessWidget {
                   Align(
                     alignment: Alignment.center,
                     child: Container(
-                      margin: EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
                       height: MediaQuery.of(context).size.height * 0.04,
                       decoration: Styles().elevatedButtonDecration(),
                       child: ElevatedButton(

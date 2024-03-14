@@ -22,6 +22,7 @@ import 'package:share/user/presentation/alerts/alert.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/const/const_color.dart';
 import 'package:share/user/presentation/pages/payment_page/payment_page.dart';
+import 'package:share/user/presentation/pages/user_pages/booking_deatails/booking_deatails_page.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 
 class RoomBookingWidget {
@@ -456,7 +457,13 @@ class RoomBookingWidget {
         ),
       ],
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) {
+              return BookingDeatailsPage(roomBookingModel: roomBookingModel);
+            },
+          ));
+        },
         child: Container(
           margin: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -655,7 +662,7 @@ class RoomBookingWidget {
       create: (context) => RoomBookingBloc(),
       child: BlocConsumer<RoomBookingBloc, RoomBookingState>(
         listener: (context, state) {
-          if(state is RoomBookingEventSuccessState){
+          if (state is RoomBookingEventSuccessState) {
             log('-------');
             SnackBars().notifyingSnackBar(state.text, context);
           }
@@ -663,7 +670,13 @@ class RoomBookingWidget {
         builder: (context, state) {
           log('$state =============');
           return GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) {
+              return BookingDeatailsPage(roomBookingModel: roomBookingModel);
+            },
+          ));
+            },
             child: Container(
               margin: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -824,5 +837,110 @@ class RoomBookingWidget {
         },
       ),
     );
+  }
+
+  //
+  historyRoomContainer(
+      {required RoomBookingModel roomBookingModel,
+      required BuildContext context}) {
+    return GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            return BookingDeatailsPage(roomBookingModel: roomBookingModel);
+          },
+        ));
+          },
+          child: Container(
+            margin: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  ConstColor().mainColorblue.withOpacity(0.4),
+                  ConstColor().main2Colorblue.withOpacity(0.2),
+                ]),
+                borderRadius: const BorderRadius.all(Radius.circular(20))),
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection(
+                      FirebaseFirestoreConst.firebaseFireStoreRoomCollection)
+                  .doc(roomBookingModel.roomId)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: MediaQuery.of(context).size.width * 0.3,
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20)),
+                              image: DecorationImage(
+                                  image: NetworkImage(roomBookingModel.image),
+                                  fit: BoxFit.fill)),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                snapshot.data!.data()![FirebaseFirestoreConst
+                                    .firebaseFireStoreHotelName],
+                                style:
+                                    Theme.of(context).textTheme.titleMedium,
+                              ),
+                              Text(
+                                snapshot.data!
+                                    .data()![FirebaseFirestoreConst
+                                        .firebaseFireStoreRoomNumber]
+                                    .toString(),
+                                style: Theme.of(context).textTheme.titleSmall,
+                              ),
+                              Text(
+                                '₹ ${roomBookingModel.price}',
+                                style: Theme.of(context).textTheme.titleSmall,
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['start']!)}  1:00 PM',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall,
+                                  ),
+                                  Text(
+                                    'To',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall,
+                                  ),
+                                  Text(
+                                    '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['end']!)}  11:30 AM',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              },
+            ),
+          ),
+        );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/firebase_options.dart';
 import 'package:share/user/aplication/filter_bloc/filter_bloc.dart';
 import 'package:share/user/aplication/main_user_bloc/main_user_bloc.dart';
+import 'package:share/user/aplication/main_user_bloc/main_user_state.dart';
 import 'package:share/user/aplication/notification_bloc/notification_bloc.dart';
 import 'package:share/user/aplication/rating_and_feedback/rating_and_feedback_bloc.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
@@ -66,12 +67,16 @@ class MainApp extends StatelessWidget {
           child: Container(),
         )
       ],
-      child: MaterialApp(
-        theme: UserTheme().lightTheme,
-        darkTheme: UserTheme().darkTheme,
-        debugShowCheckedModeBanner: false,
-        // home:  loginStatus == '' ? UserLogin() : loginStatus != null? UserHome() : const WelcomeUser() ,
-        home: SplashScreen(userId: loginStatus),
+      child: BlocBuilder<MainUserBloc, MainUserState>(
+        builder: (context, state) {
+          return MaterialApp(
+            theme: UserTheme().lightTheme,
+            darkTheme: UserTheme().darkTheme,
+            debugShowCheckedModeBanner: false,
+            // home:  loginStatus == '' ? UserLogin() : loginStatus != null? UserHome() : const WelcomeUser() ,
+            home: SplashScreen(userId: loginStatus),
+          );
+        },
       ),
     );
   }

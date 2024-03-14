@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
 import 'package:share/user/aplication/room_bookin_bloc/room_booking_state.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
@@ -35,15 +36,32 @@ class UserCurrentPropertyPage extends StatelessWidget {
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return ListView(
-                  children: List.generate(snapshot.data!.docs.length, (index) {
-                    log('${snapshot.data!.docs[index].data()}');
-                    return CurrentRoomWidget().currentEnrolledRoomContainer(
-                        context: context,
-                        roomBookingModel: RoomBookingModel.fromMap(
-                            snapshot.data!.docs[index].data()));
-                  }),
-                );
+                if (snapshot.data!.docs.isNotEmpty) {
+                  return ListView(
+                    children:
+                        List.generate(snapshot.data!.docs.length, (index) {
+                      log('${snapshot.data!.docs[index].data()}');
+                      return CurrentRoomWidget().currentEnrolledRoomContainer(
+                          context: context,
+                          roomBookingModel: RoomBookingModel.fromMap(
+                              snapshot.data!.docs[index].data()));
+                    }),
+                  );
+                } else {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Lottie.asset('assets/images/no current property.json'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text('No current Enrolled Room',style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.grey),),
+                      )
+                    ],
+                  );
+                }
               } else {
                 return Text('no room now');
               }

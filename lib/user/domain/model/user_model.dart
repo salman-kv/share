@@ -3,12 +3,13 @@ import 'dart:developer';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 
 class UserModel {
-  final String name;
+   String name;
   final String password;
-  final String phone;
-  final String imagePath;
+   String phone;
+   String imagePath;
   final String email;
   final String? userId;
+  final List<dynamic> favirote;
 
   UserModel(
       {required this.userId,
@@ -17,6 +18,7 @@ class UserModel {
       required this.password,
       required this.phone,
       required this.imagePath,  
+      required this.favirote
       });
 
   Map<String, dynamic> toMap() {
@@ -26,7 +28,8 @@ class UserModel {
       "name": name,
       "password": password,
       "phone": phone,
-      "image": imagePath
+      "image": imagePath,
+      "favorite" : favirote 
     };
   }
 
@@ -34,6 +37,7 @@ class UserModel {
     log('${map[FirebaseFirestoreConst.firebaseFireStoreImage]}');
     UserModel a= UserModel(
         userId: userId,
+        favirote: map[FirebaseFirestoreConst.firebaseFireStoreFavorite] ?? [],
         email: map[FirebaseFirestoreConst.firebaseFireStoreEmail],
         name: map[FirebaseFirestoreConst.firebaseFireStoreName],
         password: map[FirebaseFirestoreConst.firebaseFireStorePassword],

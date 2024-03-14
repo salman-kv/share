@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,10 +9,15 @@ import 'package:share/user/aplication/filter_bloc/filter_bloc.dart';
 import 'package:share/user/aplication/filter_bloc/filter_event.dart';
 import 'package:share/user/aplication/filter_bloc/filter_state.dart';
 import 'package:share/user/aplication/hotel_bloc/hotel_bloc.dart';
+import 'package:share/user/aplication/rating_and_feedback/rating_and_feedback_bloc.dart';
+import 'package:share/user/aplication/rating_and_feedback/rating_and_feedback_event.dart';
+import 'package:share/user/aplication/rating_and_feedback/rating_and_feedback_state.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_event.dart';
 import 'package:share/user/aplication/search_bloc/search_state.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
+import 'package:share/user/aplication/user_login_bloc/user_login_event.dart';
+import 'package:share/user/aplication/user_login_bloc/user_login_state.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/enum/hotel_type.dart';
 import 'package:share/user/domain/functions/user_firestroe_funciton.dart';
@@ -20,14 +26,17 @@ import 'package:share/user/domain/model/room_model.dart';
 import 'package:share/user/presentation/alerts/alert.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/const/const_color.dart';
+import 'package:share/user/presentation/pages/history_page/history_page.dart';
+import 'package:share/user/presentation/pages/profile/profile_page.dart';
+import 'package:share/user/presentation/pages/user_pages/favorite_page/favorite_page.dart';
 import 'package:share/user/presentation/pages/user_pages/hotel_page/hotel_showing_page.dart';
+import 'package:share/user/presentation/pages/user_pages/rating_feedback/rating_and_feedback.dart';
 import 'package:share/user/presentation/pages/user_pages/room_page/room_deatailed_page.dart';
 
 TextEditingController searchController = TextEditingController();
 
 class CommonWidget {
   customSearchBar(context) {
-    log('again search');
     return BlocConsumer<SearchBloc, SearchState>(
       listener: (context, state) {
         if (state is OnChangeSearchState) {
@@ -36,7 +45,6 @@ class CommonWidget {
         }
       },
       builder: (context, state) {
-        log('keranindeeeeeee +++++++++++++++++++++++++++++++++');
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           child: SearchBar(
@@ -64,6 +72,17 @@ class CommonWidget {
                   size: 30,
                   color: Colors.grey,
                 )),
+            onSubmitted: (value) {
+              if (searchController.text.isNotEmpty) {
+                BlocProvider.of<SearchBloc>(context)
+                    .add(OnChangeSearchEvent(text: searchController.text));
+                BlocProvider.of<SearchBloc>(context).add(OnTapSearchEvent());
+                BlocProvider.of<FilterBloc>(context)
+                    .add(OnCancelSearchAndFilterRemoveEvent());
+              } else {
+                SnackBars().errorSnackBar('Pleas enter your place', context);
+              }
+            },
             hintText: 'Search by place and hotel name . . .',
             hintStyle: MaterialStatePropertyAll<TextStyle>(Theme.of(context)
                 .textTheme
@@ -297,14 +316,34 @@ class CommonWidget {
                               roomModel.hotelName,
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.favorite,
-                                size: 30,
-                                color: Colors.red,
-                              ),
-                              onPressed: () {},
-                            )
+                            context
+                                    .watch<UserLoginBloc>()
+                                    .favoriteRooms
+                                    .contains(roomModel.id)
+                                ? IconButton(
+                                    icon: const Icon(
+                                      Icons.favorite,
+                                      size: 30,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      BlocProvider.of<UserLoginBloc>(context)
+                                          .add(OnTapFavoriteEvent(
+                                              roomId: roomModel.id!));
+                                    },
+                                  )
+                                : IconButton(
+                                    icon: const Icon(
+                                      Icons.favorite_border,
+                                      size: 30,
+                                      color: Color.fromARGB(255, 138, 138, 138),
+                                    ),
+                                    onPressed: () {
+                                      BlocProvider.of<UserLoginBloc>(context)
+                                          .add(OnTapFavoriteEvent(
+                                              roomId: roomModel.id!));
+                                    },
+                                  )
                           ],
                         ),
                       ),
@@ -313,19 +352,11 @@ class CommonWidget {
                 ),
                 Row(
                   children: [
-                    const Icon(Icons.location_on, size: 25),
-                    Text(
-                      // propertyModel.place,
-                      roomModel.place!,
-                      style: Theme.of(context).textTheme.titleSmall,
-                    )
+                    Icon(Icons.place),
+                    Text('${roomModel.place}',
+                        style: Theme.of(context).textTheme.titleSmall!)
                   ],
                 ),
-                // Padding(
-                //     padding:
-                //         const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                //     child: Text(roomModel.roomNumber,
-                //         style: Theme.of(context).textTheme.titleMedium)),
                 Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -336,34 +367,58 @@ class CommonWidget {
                           .titleLarge!
                           .copyWith(fontSize: 20),
                     )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.star,
-                          size: 25,
-                          color: Color.fromARGB(255, 230, 207, 5),
-                        ),
-                        Text(
-                          // propertyModel.place,
-                          '4.2 (250)',
-                          style: Theme.of(context).textTheme.displaySmall,
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        roomModel.roomType == HotelType.hotel
-                            ? 'Hotel'
-                            : 'Dormitory',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    )
-                  ],
-                ),
+                StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection(FirebaseFirestoreConst
+                            .firebaseFireStoreRoomCollection)
+                        .doc(roomModel.id)
+                        .collection(FirebaseFirestoreConst
+                            .firebaseFireStoreRatingAndFeedback)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        BlocProvider.of<RatingAndFeedbackBloc>(context)
+                            .add(OnTotalRatingCalculation(snapshot: snapshot));
+                        return BlocBuilder<RatingAndFeedbackBloc,
+                            RatingAndFeedbackState>(
+                          builder: (context, state) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.star,
+                                      size: 25,
+                                      color: Color.fromARGB(255, 230, 207, 5),
+                                    ),
+                                    Text(
+                                      // propertyModel.place,
+                                      '${BlocProvider.of<RatingAndFeedbackBloc>(context).totalRatingAvarageStars.toStringAsFixed(2)} ( ${BlocProvider.of<RatingAndFeedbackBloc>(context).totalEntries} )',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall,
+                                    )
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    roomModel.roomType == HotelType.hotel
+                                        ? 'Hotel'
+                                        : 'Dormitory',
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                )
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        return const Text('no review');
+                      }
+                    }),
               ],
             ),
           ),
@@ -827,145 +882,220 @@ class CommonWidget {
           MediaQuery.of(context).platformBrightness == Brightness.dark
               ? const Color.fromARGB(150, 255, 255, 255)
               : const Color.fromARGB(150, 0, 0, 0),
-      child: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(10),
-            height: MediaQuery.of(context).size.width * 0.45,
-            width: MediaQuery.of(context).size.width * 0.45,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(150),
+      child: BlocBuilder<UserLoginBloc, UserLoginState>(
+        builder: (context, state) {
+          return Column(
+            children: [
+              Container(
+                  margin: const EdgeInsets.all(10),
+                  height: MediaQuery.of(context).size.width * 0.45,
+                  width: MediaQuery.of(context).size.width * 0.45,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(150),
+                    ),
+                  ),
+                  child:
+                      BlocProvider.of<UserLoginBloc>(context).userModel == null
+                          ? null
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(1000),
+                              child: CommonWidget().profileNetworkImage(
+                                  context: context,
+                                  image: BlocProvider.of<UserLoginBloc>(context)
+                                      .userModel!
+                                      .imagePath),
+                            )),
+              Text(
+                context.watch<UserLoginBloc>().userModel != null
+                    ? BlocProvider.of<UserLoginBloc>(context).userModel!.name
+                    : '',
+                style: Theme.of(context).textTheme.labelLarge,
               ),
-              image: BlocProvider.of<UserLoginBloc>(context).userModel == null
-                  ? null
-                  : DecorationImage(
-                      image: NetworkImage(
-                          BlocProvider.of<UserLoginBloc>(context)
-                              .userModel!
-                              .imagePath),
-                      fit: BoxFit.cover),
-            ),
-          ),
-          Text(
-            context.watch<UserLoginBloc>().userModel!=null ? BlocProvider.of<UserLoginBloc>(context).userModel!.name :'',
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.person_2_rounded,
-                          size: 30,
-                          color: Colors.grey,
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return const ProfilePage();
+                          },
+                        ));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 7),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.person_2_rounded,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.01,
+                            ),
+                            Text(
+                              'Profile',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.01,
-                        ),
-                        Text(
-                          'Profile',
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return FavoritePage();
+                          },
+                        ));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 7),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.favorite,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.01,
+                            ),
+                            Text(
+                              'Favorite',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return const HistoryPage();
+                          },
+                        ));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 7),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.history,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.01,
+                            ),
+                            Text(
+                              'History',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 7),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.security_rounded,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.01,
+                            ),
+                            Text(
+                              'Privacy policy',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {},
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 7),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.privacy_tip_rounded,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.01,
+                            ),
+                            Text(
+                              'Terms & Condition',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Alerts().dialgForDelete(
+                            context: context,
+                            function: UserFireStroreFunction().userLogOut,
+                            text: 'Do you like to logout');
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 7),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 7),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: MediaQuery.of(context).platformBrightness ==
+                                  Brightness.light
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.logout_outlined,
+                              size: 30,
+                              color: Color.fromARGB(255, 214, 6, 6),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.01,
+                            ),
+                            Text(
+                              'Log Out',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.security_rounded,
-                          size: 30,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.01,
-                        ),
-                        Text(
-                          'Privacy policy',
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.privacy_tip_rounded,
-                          size: 30,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.01,
-                        ),
-                        Text(
-                          'Terms & Condition',
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Alerts().dialgForDelete(context: context,function: UserFireStroreFunction().userLogOut,text: 'Do you like to logout');
-                  },
-                  child: Container(
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: MediaQuery.of(context).platformBrightness ==
-                              Brightness.light
-                          ? Colors.white
-                          : Colors.black,
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.logout_outlined,
-                          size: 30,
-                          color: Color.fromARGB(255, 214, 6, 6),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.01,
-                        ),
-                        Text(
-                          'Log Out',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium!
-                              .copyWith(color: Colors.red),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
+              )
+            ],
+          );
+        },
       ),
     );
   }
@@ -976,6 +1106,41 @@ class CommonWidget {
       height: 150,
       width: 150,
       child: Lottie.asset('assets/images/loading.json'),
+    );
+  }
+
+  // no data widget
+  noDataWidget({required String text, required BuildContext context}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Lottie.asset('assets/images/no data found.json'),
+        Text(
+          text,
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium!
+              .copyWith(color: Colors.grey),
+        )
+      ],
+    );
+  }
+
+  // profile network image
+  profileNetworkImage({required BuildContext context, required String image}) {
+    return Image.network(
+      image,
+      fit: BoxFit.cover,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) {
+          return child;
+        } else {
+          return Lottie.asset('assets/images/profile_loading.json');
+        }
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return Image.asset('assets/images/profile.png');
+      },
     );
   }
 }

@@ -2,3 +2,4 @@ abstract class RatingAndFeedbackState{}
 class InitialRatingAndFeedbackState extends RatingAndFeedbackState{}
 class RatingUpdatedState extends RatingAndFeedbackState{}
 class RatingAndFeedbackSubmitedState extends RatingAndFeedbackState{}
+class RatingCountUpdatedState extends RatingAndFeedbackState{}

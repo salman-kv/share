@@ -6,6 +6,7 @@ class FirebaseFirestoreConst {
   static String firebaseFireStoreName = 'name';
   static String firebaseFireStorePhone='phone';
   static String firebaseFireStoreImage='image';
+  static String firebaseFireStoreFavorite='favorite';
 
   // collections
   static String firebaseFireStoreUserCollection = 'user';
@@ -19,6 +20,8 @@ class FirebaseFirestoreConst {
   static String firebaseFireStoreCurrentBookedRoomCollection='currentBookedRoomCollection';
   static String firebaseFireStoreCurrentBookingAndPayAtHotelRoomCollection='currentBookingAndPayAtHotelRoomCollection';
     static String firebaseFireStoreRatingAndFeedback = 'ratingAndFeedback';
+    static String firebaseFireStoreFavoriteCollection= 'favoriteCollection';
+      static String firebaseFireStoreBookingHistory = 'bookingHistory';
 
 
 

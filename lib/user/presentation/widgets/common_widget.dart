@@ -27,7 +27,9 @@ import 'package:share/user/presentation/alerts/alert.dart';
 import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/const/const_color.dart';
 import 'package:share/user/presentation/pages/history_page/history_page.dart';
+import 'package:share/user/presentation/pages/privacy_policy/privacy_policy.dart';
 import 'package:share/user/presentation/pages/profile/profile_page.dart';
+import 'package:share/user/presentation/pages/terms_and_condition/terms_and_condition.dart';
 import 'package:share/user/presentation/pages/user_pages/favorite_page/favorite_page.dart';
 import 'package:share/user/presentation/pages/user_pages/hotel_page/hotel_showing_page.dart';
 import 'package:share/user/presentation/pages/user_pages/rating_feedback/rating_and_feedback.dart';
@@ -1005,7 +1007,13 @@ class CommonWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return const PrivacyPolicyScreen();
+                          },
+                        ));
+                      },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 7),
@@ -1028,7 +1036,13 @@ class CommonWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return const TermsAndConditions();
+                          },
+                        ));
+                      },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 7),
@@ -1135,8 +1149,7 @@ class CommonWidget {
         if (loadingProgress == null) {
           return child;
         }
-          return Lottie.asset('assets/images/profile_loading.json');
-        
+        return Lottie.asset('assets/images/profile_loading.json');
       },
       errorBuilder: (context, error, stackTrace) {
         return Image.asset('assets/images/profile.png');

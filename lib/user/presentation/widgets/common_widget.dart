@@ -597,14 +597,14 @@ class CommonWidget {
                                   mainPropertyModel.propertyNmae,
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.favorite,
-                                    size: 30,
-                                    color: Colors.red,
-                                  ),
-                                  onPressed: () {},
-                                )
+                                // IconButton(
+                                //   icon: const Icon(
+                                //     Icons.favorite,
+                                //     size: 30,
+                                //     color: Colors.red,
+                                //   ),
+                                //   onPressed: () {},
+                                // )
                               ],
                             ),
                           ),
@@ -705,7 +705,7 @@ class CommonWidget {
   bottomSheetTopContainer({required BuildContext context}) {
     return Container(
       margin: EdgeInsets.only(bottom: 10),
-      height: MediaQuery.of(context).size.height * 0.009,
+      height: MediaQuery.of(context).size.height * 0.005,
       width: MediaQuery.of(context).size.width * 0.3,
       decoration: BoxDecoration(
           color: Colors.grey, borderRadius: BorderRadius.circular(100)),
@@ -1134,9 +1134,9 @@ class CommonWidget {
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) {
           return child;
-        } else {
-          return Lottie.asset('assets/images/profile_loading.json');
         }
+          return Lottie.asset('assets/images/profile_loading.json');
+        
       },
       errorBuilder: (context, error, stackTrace) {
         return Image.asset('assets/images/profile.png');

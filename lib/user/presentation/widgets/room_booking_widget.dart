@@ -480,167 +480,196 @@ class RoomBookingWidget {
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                return Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        height: MediaQuery.of(context).size.width * 0.3,
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                            image: DecorationImage(
-                                image: NetworkImage(roomBookingModel.image),
-                                fit: BoxFit.fill)),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            height: MediaQuery.of(context).size.width * 0.3,
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(20)),
+                                image: DecorationImage(
+                                    image: NetworkImage(roomBookingModel.image),
+                                    fit: BoxFit.fill)),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    snapshot.data!.data()![
-                                        FirebaseFirestoreConst
-                                            .firebaseFireStoreHotelName],
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                ),
-                                BlocListener<RoomBookingBloc, RoomBookingState>(
-                                  listener: (context, state) {
-                                    if (state
-                                        is RoomBookingCancelSuccessState) {
-                                      SnackBars().successSnackBar(
-                                          'Room booking canceled', context);
-                                    }
-                                  },
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      BlocProvider.of<RoomBookingBloc>(context)
-                                          .add(OnCancelRoomBooking(
-                                              roomBookingModel:
-                                                  roomBookingModel,
-                                              context: context,
-                                              text: 'Cancel the room'));
-                                      // Alerts().dialgForDelete(
-                                      //   roomBookingModel: roomBookingModel,
-                                      //   context: context,
-                                      //   text: 'Cancel the room',
-                                      // );
-                                    },
-                                    child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.07,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2,
-                                      decoration: BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(100)),
-                                      child: Center(
-                                          child: Text(
-                                        'cancel',
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        snapshot.data!.data()![
+                                            FirebaseFirestoreConst
+                                                .firebaseFireStoreHotelName],
                                         style: Theme.of(context)
                                             .textTheme
-                                            .displaySmall!
-                                            .copyWith(color: Colors.white),
-                                      )),
+                                            .titleMedium,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Text(
-                              snapshot.data!
-                                  .data()![FirebaseFirestoreConst
-                                      .firebaseFireStoreRoomNumber]
-                                  .toString(),
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                            Text(
-                              '₹ ${roomBookingModel.price}',
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                            Column(
-                              children: [
-                                Text(
-                                  '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['start']!)}  1:00 PM',
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
-                                Text(
-                                  'To',
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
-                                Text(
-                                  '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['end']!)}  11:30 AM',
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
-                                BlocConsumer<SingleRoomBloc, SingleRoomState>(
-                                  listener: (context, state) {
-                                    if (state is SingleRoomSuccessState) {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(builder: (ctx) {
-                                        return PaymentScreen(
-                                          roomBookingModel: roomBookingModel,
-                                          mainContext: context,
-                                          price: roomBookingModel.price,
-                                          bookingId: bookingId,
-                                        );
-                                      }));
-                                    }
-                                  },
-                                  builder: (context, state) {
-                                    return Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.04,
-                                      decoration:
-                                          Styles().elevatedButtonDecration(),
-                                      child: ElevatedButton(
-                                        style: Styles().elevatedButtonStyle(),
-                                        onPressed: () {
-                                          context
-                                                  .read<RoomBookingBloc>()
-                                                  .startingDate =
-                                              roomBookingModel
-                                                  .bookedDate['start'];
-                                          context
-                                                  .read<RoomBookingBloc>()
-                                                  .endingDate =
-                                              roomBookingModel
-                                                  .bookedDate['end'];
-                                          BlocProvider.of<SingleRoomBloc>(
+                                    BlocListener<RoomBookingBloc,
+                                        RoomBookingState>(
+                                      listener: (context, state) {
+                                        if (state
+                                            is RoomBookingCancelSuccessState) {
+                                          SnackBars().successSnackBar(
+                                              'Room booking canceled', context);
+                                        }
+                                      },
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          BlocProvider.of<RoomBookingBloc>(
                                                   context)
-                                              .add(
-                                                  OnInitialRoomDeatailsAddingEvent(
-                                                      id: roomBookingModel
-                                                          .roomId));
+                                              .add(OnCancelRoomBooking(
+                                                  roomBookingModel:
+                                                      roomBookingModel,
+                                                  context: context,
+                                                  text: 'Cancel the room'));
+                                          // Alerts().dialgForDelete(
+                                          //   roomBookingModel: roomBookingModel,
+                                          //   context: context,
+                                          //   text: 'Cancel the room',
+                                          // );
                                         },
-                                        child: Text(
-                                          'Pay Now',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall!
-                                              .copyWith(color: Colors.white),
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.07,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                          decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius:
+                                                  BorderRadius.circular(100)),
+                                          child: Center(
+                                              child: Text(
+                                            'cancel',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .displaySmall!
+                                                .copyWith(color: Colors.white),
+                                          )),
                                         ),
                                       ),
-                                    );
-                                  },
-                                )
+                                    )
+                                  ],
+                                ),
+                                Text(
+                                  snapshot.data!
+                                      .data()![FirebaseFirestoreConst
+                                          .firebaseFireStoreRoomNumber]
+                                      .toString(),
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                Text(
+                                  '₹ ${roomBookingModel.price}',
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['start']!)}  1:00 PM',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    ),
+                                    Text(
+                                      'To',
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    ),
+                                    Text(
+                                      '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['end']!)}  11:30 AM',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    ),
+                                    BlocConsumer<SingleRoomBloc,
+                                        SingleRoomState>(
+                                      listener: (context, state) {
+                                        if (state is SingleRoomSuccessState) {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(builder: (ctx) {
+                                            return PaymentScreen(
+                                              roomBookingModel:
+                                                  roomBookingModel,
+                                              mainContext: context,
+                                              price: roomBookingModel.price,
+                                              bookingId: bookingId,
+                                            );
+                                          }));
+                                        }
+                                      },
+                                      builder: (context, state) {
+                                        return Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.04,
+                                          decoration: Styles()
+                                              .elevatedButtonDecration(),
+                                          child: ElevatedButton(
+                                            style:
+                                                Styles().elevatedButtonStyle(),
+                                            onPressed: () {
+                                              context
+                                                      .read<RoomBookingBloc>()
+                                                      .startingDate =
+                                                  roomBookingModel
+                                                      .bookedDate['start'];
+                                              context
+                                                      .read<RoomBookingBloc>()
+                                                      .endingDate =
+                                                  roomBookingModel
+                                                      .bookedDate['end'];
+                                              BlocProvider.of<SingleRoomBloc>(
+                                                      context)
+                                                  .add(
+                                                      OnInitialRoomDeatailsAddingEvent(
+                                                          id: roomBookingModel
+                                                              .roomId));
+                                            },
+                                            child: Text(
+                                              'Pay Now',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleSmall!
+                                                  .copyWith(
+                                                      color: Colors.white),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Text(
+                      '(Please reach the hotel before 2 hour , other wise the hotel owner may be cancel the booking )',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .displaySmall!
+                          .copyWith(color: Colors.red, fontSize: 12),
                     )
                   ],
                 );
@@ -672,10 +701,11 @@ class RoomBookingWidget {
           return GestureDetector(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) {
-              return BookingDeatailsPage(roomBookingModel: roomBookingModel);
-            },
-          ));
+                builder: (context) {
+                  return BookingDeatailsPage(
+                      roomBookingModel: roomBookingModel);
+                },
+              ));
             },
             child: Container(
               margin: const EdgeInsets.all(10),
@@ -756,7 +786,7 @@ class RoomBookingWidget {
                                     DateTime.now().isAfter(roomBookingModel
                                                 .bookedDate['start']!
                                                 .add(const Duration(
-                                                    hours: 1))) &&
+                                                    seconds: 1))) &&
                                             DateTime.now().isBefore(roomBookingModel
                                                 .bookedDate['end']!
                                                 .add(const Duration(hours: 11)))
@@ -844,103 +874,96 @@ class RoomBookingWidget {
       {required RoomBookingModel roomBookingModel,
       required BuildContext context}) {
     return GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
           builder: (context) {
             return BookingDeatailsPage(roomBookingModel: roomBookingModel);
           },
         ));
-          },
-          child: Container(
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  ConstColor().mainColorblue.withOpacity(0.4),
-                  ConstColor().main2Colorblue.withOpacity(0.2),
-                ]),
-                borderRadius: const BorderRadius.all(Radius.circular(20))),
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection(
-                      FirebaseFirestoreConst.firebaseFireStoreRoomCollection)
-                  .doc(roomBookingModel.roomId)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: MediaQuery.of(context).size.width * 0.3,
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(20)),
-                              image: DecorationImage(
-                                  image: NetworkImage(roomBookingModel.image),
-                                  fit: BoxFit.fill)),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+      },
+      child: Container(
+        margin: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [
+              ConstColor().mainColorblue.withOpacity(0.4),
+              ConstColor().main2Colorblue.withOpacity(0.2),
+            ]),
+            borderRadius: const BorderRadius.all(Radius.circular(20))),
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection(
+                  FirebaseFirestoreConst.firebaseFireStoreRoomCollection)
+              .doc(roomBookingModel.roomId)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: MediaQuery.of(context).size.width * 0.3,
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                          image: DecorationImage(
+                              image: NetworkImage(roomBookingModel.image),
+                              fit: BoxFit.fill)),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            snapshot.data!.data()![FirebaseFirestoreConst
+                                .firebaseFireStoreHotelName],
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          Text(
+                            snapshot.data!
+                                .data()![FirebaseFirestoreConst
+                                    .firebaseFireStoreRoomNumber]
+                                .toString(),
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          Text(
+                            '₹ ${roomBookingModel.price}',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          Column(
                             children: [
                               Text(
-                                snapshot.data!.data()![FirebaseFirestoreConst
-                                    .firebaseFireStoreHotelName],
-                                style:
-                                    Theme.of(context).textTheme.titleMedium,
-                              ),
-                              Text(
-                                snapshot.data!
-                                    .data()![FirebaseFirestoreConst
-                                        .firebaseFireStoreRoomNumber]
-                                    .toString(),
+                                '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['start']!)}  1:00 PM',
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
                               Text(
-                                '₹ ${roomBookingModel.price}',
+                                'To',
+                                textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
-                              Column(
-                                children: [
-                                  Text(
-                                    '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['start']!)}  1:00 PM',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall,
-                                  ),
-                                  Text(
-                                    'To',
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall,
-                                  ),
-                                  Text(
-                                    '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['end']!)}  11:30 AM',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall,
-                                  ),
-                                ],
+                              Text(
+                                '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['end']!)}  11:30 AM',
+                                style: Theme.of(context).textTheme.titleSmall,
                               ),
                             ],
                           ),
-                        ),
-                      )
-                    ],
-                  );
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              },
-            ),
-          ),
-        );
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+        ),
+      ),
+    );
   }
 }

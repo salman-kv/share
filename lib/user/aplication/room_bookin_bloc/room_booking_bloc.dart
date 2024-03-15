@@ -250,12 +250,12 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
       log('vannne-----------------');
     });
     on<OnClickRoomBookingAndPayAtHotel>((event, emit) async {
+      emit(RoomBookingLoadingState());
       // add notification
       await NotificationFunction().notificationFunction(
           roomBookingModel: event.roomBookingModel,
           notificationPurpose: 'Room Booking',
-          notificationData:
-              'Room booked Without payment');
+          notificationData: 'Room booked Without payment');
 
       // adding booking detailes to the user sub collection
       var userInstance = FirebaseFirestore.instance
@@ -286,12 +286,11 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
       emit(RoomBookingSuccessState());
     });
     on<OnCheckInClicked>((event, emit) async {
-      // check in notification 
+      // check in notification
       await NotificationFunction().notificationFunction(
           roomBookingModel: event.roomBookingModel,
           notificationPurpose: 'Check in request',
-          notificationData:
-              'Check in request send by user');
+          notificationData: 'Check in request send by user');
 
       // updating checkincheckout on user side
       var userInstance = FirebaseFirestore.instance
@@ -335,12 +334,11 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
     on<OnCheckOutClicked>((event, emit) async {
       emit(RoomBookingLoadingState());
       // check out notification
-       await NotificationFunction().notificationFunction(
+      await NotificationFunction().notificationFunction(
           roomBookingModel: event.roomBookingModel,
           notificationPurpose: 'Check out request',
-          notificationData:
-              'Check out request send by user');
-      
+          notificationData: 'Check out request send by user');
+
       // updating checkincheckout to checkoutwaiting on user side
       var userInstance = FirebaseFirestore.instance
           .collection(FirebaseFirestoreConst.firebaseFireStoreUserCollection);
@@ -384,20 +382,48 @@ class RoomBookingBloc extends Bloc<RoomBookingEvent, RoomBookingState> {
         FirebaseFirestoreConst.firebaseFireStoreCheckInORcheckOutDeatails:
             checkInCheckOutModel.toMap()
       });
-  emit(RoomBookingEventSuccessState(
+      // change data from the bookingdeatails in room
+      var roomInstance = await FirebaseFirestore.instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection)
+          .doc(event.roomBookingModel.roomId)
+          .get();
+      List<dynamic> list = roomInstance
+          .data()![FirebaseFirestoreConst.firebaseFireStoreBookingDeatails];
+      // remove old data and ad new changed data
+      for (int i = 0;
+          i <
+              roomInstance
+                  .data()![
+                      FirebaseFirestoreConst.firebaseFireStoreBookingDeatails]
+                  .length;
+          i++) {
+        if (list[i][FirebaseFirestoreConst.firebaseFireStoreBookingId] ==
+            event.roomBookingModel.bookingId) {
+          list.removeAt(i);
+          break;
+        }
+      }
+      event.roomBookingModel.checkInCheckOutModel!.request =
+          FirebaseFirestoreConst
+              .firebaseFireStoreCheckInORcheckOutRequestForCheckOutWaiting;
+      list.add(event.roomBookingModel.toMap());
+      // updating to the room
+      await FirebaseFirestore.instance
+          .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection)
+          .doc(event.roomBookingModel.roomId)
+          .update(
+              {FirebaseFirestoreConst.firebaseFireStoreBookingDeatails: list});
+      emit(RoomBookingEventSuccessState(
           text: 'checkout request send successfully'));
-    
     });
     on<OnDeleateRoomBooking>((event, emit) async {
       // add notification
-       await NotificationFunction().notificationFunction(
+      await NotificationFunction().notificationFunction(
           roomBookingModel: event.roomBookingModel,
           notificationPurpose: 'Room booking canceled',
-          notificationData:
-              'Room booking canceled by user');
+          notificationData: 'Room booking canceled by user');
 
-      
-            // cancel room booking 
+      // cancel room booking
       CollectionReference<Map<String, dynamic>> roomInstance = FirebaseFirestore
           .instance
           .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection);

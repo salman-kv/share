@@ -150,17 +150,17 @@ class MainPage extends StatelessWidget {
                                   .copyWith(
                                       fontSize: 15,
                                       color: ConstColor().mainColorblue))),
-                      FlashyTabBarItem(
-                          activeColor: ConstColor().mainColorblue,
-                          inactiveColor: ConstColor().bottomNavIconColor,
-                          icon: const Icon(Icons.message),
-                          title: Text('message',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall!
-                                  .copyWith(
-                                      fontSize: 15,
-                                      color: ConstColor().mainColorblue))),
+                      // FlashyTabBarItem(
+                      //     activeColor: ConstColor().mainColorblue,
+                      //     inactiveColor: ConstColor().bottomNavIconColor,
+                      //     icon: const Icon(Icons.message),
+                      //     title: Text('message',
+                      //         style: Theme.of(context)
+                      //             .textTheme
+                      //             .titleSmall!
+                      //             .copyWith(
+                      //                 fontSize: 15,
+                      //                 color: ConstColor().mainColorblue))),
                     ],
                     onItemSelected: (value) {
                       BlocProvider.of<MainUserBloc>(context)

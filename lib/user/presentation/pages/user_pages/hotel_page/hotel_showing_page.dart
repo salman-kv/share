@@ -84,14 +84,14 @@ class HotelShowingPage extends StatelessWidget {
                                             .textTheme
                                             .titleLarge,
                                       ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.favorite,
-                                          size: 30,
-                                          color: Colors.red,
-                                        ),
-                                        onPressed: () {},
-                                      )
+                                      // IconButton(
+                                      //   icon: const Icon(
+                                      //     Icons.favorite,
+                                      //     size: 30,
+                                      //     color: Colors.red,
+                                      //   ),
+                                      //   onPressed: () {},
+                                      // )
                                     ],
                                   ),
                                 ),

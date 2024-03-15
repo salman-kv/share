@@ -58,10 +58,10 @@ class Styles {
   elevatedButtonDecration() {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(100),
-      gradient: const LinearGradient(
+      gradient:  LinearGradient(
         colors: [
-          Color.fromARGB(255, 157, 206, 255),
-          Color.fromARGB(255, 146, 163, 253),
+          ConstColor().main2Colorblue,
+          ConstColor().mainColorblue
         ],
       ),
     );

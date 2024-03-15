@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesClass{
@@ -42,5 +44,23 @@ class SharedPreferencesClass{
   static getUserEmail()async{
     final sharedPreferece= await SharedPreferences.getInstance();
     return sharedPreferece.getString('email');
+  }
+
+  // color shared prefrence
+  static setColorIndex(int index)async{
+    final sharedPreferece= await SharedPreferences.getInstance();
+    sharedPreferece.setInt('color', index);
+  }
+  // color shared prefrence
+  static getColorIndex()async{
+    final sharedPreferece= await SharedPreferences.getInstance();
+  var a= sharedPreferece.get('color');
+  int val= a==null ? 0 :int.parse(a.toString());
+   return val;
+  }
+  // color shared prefrence
+  static deleteColorIndex()async{
+    final sharedPreferece= await SharedPreferences.getInstance();
+    sharedPreferece.setInt('color', 0);
   }
 }

@@ -5,4 +5,14 @@ class OnNavBarClickedEvent extends MainUserEvent{
   OnNavBarClickedEvent({required this.index});
 }
 
-class OnColorChangeEvent extends MainUserEvent{}
+class OnColorChangeEvent extends MainUserEvent{
+  final int index;
+
+  OnColorChangeEvent({required this.index});
+  
+}
+class OnSelectColorBySharedPrefrence extends MainUserEvent{
+  final int index;
+
+  OnSelectColorBySharedPrefrence({required this.index});
+}

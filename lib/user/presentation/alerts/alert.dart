@@ -19,11 +19,6 @@ class Alerts {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             title: Column(
               children: [
-                const Icon(
-                  Icons.warning,
-                  color: Color.fromARGB(255, 244, 67, 54),
-                  size: 29,
-                ),
                 const SizedBox(
                   height: 15,
                 ),

@@ -34,8 +34,11 @@ import 'package:share/user/presentation/pages/user_pages/favorite_page/favorite_
 import 'package:share/user/presentation/pages/user_pages/hotel_page/hotel_showing_page.dart';
 import 'package:share/user/presentation/pages/user_pages/rating_feedback/rating_and_feedback.dart';
 import 'package:share/user/presentation/pages/user_pages/room_page/room_deatailed_page.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 TextEditingController searchController = TextEditingController();
+final Uri _url = Uri.parse('https://www.instagram.com/_salman_kv_/');
 
 class CommonWidget {
   customSearchBar(context) {
@@ -297,13 +300,29 @@ class CommonWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: 200,
-                  decoration: BoxDecoration(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      image: DecorationImage(
-                          image: NetworkImage(roomModel.images[0]),
-                          fit: BoxFit.fill)),
-                ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(
+                        (roomModel.images[0]),
+                        fit: BoxFit.fill,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                          return Shimmer.fromColors(
+                            baseColor: const Color.fromARGB(255, 230, 230, 230),
+                            highlightColor:
+                                const Color.fromARGB(255, 200, 200, 200),
+                            child: const ColoredBox(color: Colors.grey),
+                          );
+                        },
+                      ),
+                    )),
                 Row(
                   children: [
                     Expanded(
@@ -352,9 +371,16 @@ class CommonWidget {
                     ),
                   ],
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Text(
+                    roomModel.roomNumber,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
                 Row(
                   children: [
-                    Icon(Icons.place),
+                    const Icon(Icons.place),
                     Text('${roomModel.place}',
                         style: Theme.of(context).textTheme.titleSmall!)
                   ],
@@ -1000,6 +1026,31 @@ class CommonWidget {
                             ),
                             Text(
                               'History',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        launchUrl(_url);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 7),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.person_2_outlined,
+                              size: 30,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.01,
+                            ),
+                            Text(
+                              'About us',
                               style: Theme.of(context).textTheme.labelMedium,
                             ),
                           ],

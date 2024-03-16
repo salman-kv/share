@@ -7,9 +7,6 @@ import 'package:share/user/aplication/rating_and_feedback/rating_and_feedback_bl
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_event.dart';
 import 'package:share/user/aplication/search_bloc/search_state.dart';
-import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
-import 'package:share/user/aplication/user_login_bloc/user_login_state.dart';
-import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';
 
 class UserHome extends StatelessWidget {

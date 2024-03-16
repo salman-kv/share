@@ -14,6 +14,8 @@ import 'package:share/user/aplication/singel_room_bloc/single_room_event.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_state.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
+import 'package:share/user/domain/functions/notification_function.dart';
+import 'package:share/user/domain/functions/time_function.dart';
 import 'package:share/user/domain/functions/user_function.dart';
 import 'package:share/user/domain/model/checkin_checkout_model.dart';
 import 'package:share/user/domain/model/room_booking_model.dart';
@@ -663,13 +665,16 @@ class RoomBookingWidget {
                         )
                       ],
                     ),
-                    Text(
-                      '(Please reach the hotel before 2 hour , other wise the hotel owner may be cancel the booking )',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .displaySmall!
-                          .copyWith(color: Colors.red, fontSize: 12),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        '( Please reach hotel before ${TimeFunction().toTimeOnly(dateTime: roomBookingModel.bookingTime.add(const Duration(hours: 2)))} )',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(color: Colors.red, fontSize: 12),
+                      ),
                     )
                   ],
                 );
@@ -938,7 +943,7 @@ class RoomBookingWidget {
                           Column(
                             children: [
                               Text(
-                                '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['start']!)}  1:00 PM',
+                                '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.checkInCheckOutModel!.checkInTime!)}  -  ${TimeFunction().toTimeOnly(dateTime: roomBookingModel.checkInCheckOutModel!.checkInTime!)}',
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
                               Text(
@@ -947,7 +952,7 @@ class RoomBookingWidget {
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
                               Text(
-                                '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.bookedDate['end']!)}  11:30 AM',
+                                '${UserFunction().dateTimeToDateOnly(dateTime: roomBookingModel.checkInCheckOutModel!.checkOutTime!)}  -  ${TimeFunction().toTimeOnly(dateTime: roomBookingModel.checkInCheckOutModel!.checkOutTime!)}',
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
                             ],

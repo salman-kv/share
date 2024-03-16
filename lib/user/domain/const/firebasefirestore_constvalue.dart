@@ -92,4 +92,7 @@ class FirebaseFirestoreConst {
 // rating and feedback
   static String firebaseFireStoreRating = 'rating';
   static String firebaseFireStoreFeedback = 'feedback';
+
+  //
+  static String firebaseFireStoreTime = 'time';
 }

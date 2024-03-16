@@ -30,6 +30,7 @@ class HistoryPage extends StatelessWidget {
                   .doc(BlocProvider.of<UserLoginBloc>(context).userId)
                   .collection(
                       FirebaseFirestoreConst.firebaseFireStoreBookingHistory)
+                  .orderBy(FirebaseFirestoreConst.firebaseFireStoreTime,descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {

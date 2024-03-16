@@ -1,10 +1,11 @@
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/firebase_options.dart';
 import 'package:share/user/aplication/filter_bloc/filter_bloc.dart';
 import 'package:share/user/aplication/main_user_bloc/main_user_bloc.dart';
-import 'package:share/user/aplication/main_user_bloc/main_user_event.dart';
 import 'package:share/user/aplication/main_user_bloc/main_user_state.dart';
 import 'package:share/user/aplication/notification_bloc/notification_bloc.dart';
 import 'package:share/user/aplication/rating_and_feedback/rating_and_feedback_bloc.dart';
@@ -12,9 +13,10 @@ import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
+import 'package:share/user/domain/functions/connectivity_function.dart';
 import 'package:share/user/domain/functions/shared_prefrence.dart';
 import 'package:share/user/presentation/const/const_color.dart';
-import 'package:share/user/presentation/pages/user_pages/rating_feedback/rating_and_feedback.dart';
+
 import 'package:share/user/presentation/splash_screen/splash_screen.dart';
 import 'package:share/user/presentation/theme/user_theme.dart';
 

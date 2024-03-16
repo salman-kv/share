@@ -99,7 +99,7 @@ class CurrentRoomWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Booking deatails',
+                                'Booking details',
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium!
@@ -114,32 +114,32 @@ class CurrentRoomWidget {
                           ),
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 5),
-                        margin: const EdgeInsets.symmetric(vertical: 5),
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 11, 1, 93),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Chat With Owner',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(color: Colors.white),
-                            ),
-                            const Icon(
-                              Icons.chat,
-                              color: Colors.white,
-                              size: 30,
-                            )
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       horizontal: 15, vertical: 5),
+                      //   margin: const EdgeInsets.symmetric(vertical: 5),
+                      //   height: 50,
+                      //   decoration: BoxDecoration(
+                      //       color: const Color.fromARGB(255, 11, 1, 93),
+                      //       borderRadius: BorderRadius.circular(10)),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Text(
+                      //         'Chat With Owner',
+                      //         style: Theme.of(context)
+                      //             .textTheme
+                      //             .titleMedium!
+                      //             .copyWith(color: Colors.white),
+                      //       ),
+                      //       const Icon(
+                      //         Icons.chat,
+                      //         color: Colors.white,
+                      //         size: 30,
+                      //       )
+                      //     ],
+                      //   ),
+                      // ),
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(builder: (context) {

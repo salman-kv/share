@@ -14,7 +14,7 @@ class BookingDeatailsPage extends StatelessWidget {
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
-              title: Text('Booking Deatails',style: Theme.of(context).textTheme.titleLarge,),
+              title: Text('Booking Details',style: Theme.of(context).textTheme.titleLarge,),
               centerTitle: true,
             ),
             body: ListView(

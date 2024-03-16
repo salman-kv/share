@@ -39,7 +39,7 @@ removingTimeFromDatetime({required DateTime dateTime}){
 
 // convert datetime to date only 
 dateTimeToDateOnly({required DateTime dateTime}){
-  return DateFormat('d MMMM yyyy').format(dateTime);
+  return DateFormat('d MMM yyyy').format(dateTime);
 }
 
 

@@ -10,7 +10,7 @@ import 'package:share/user/aplication/search_bloc/search_state.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';
 
 class UserHome extends StatelessWidget {
-  UserHome({super.key});
+  const UserHome({super.key});
 
   @override
   Widget build(BuildContext context) {

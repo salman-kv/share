@@ -84,7 +84,7 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                             }),
                             options: CarouselOptions(
                               autoPlay: true,
-                              autoPlayInterval: const Duration(seconds: 3),
+                              autoPlayInterval: const Duration(seconds: 8),
                               autoPlayAnimationDuration:
                                   const Duration(seconds: 2),
                               viewportFraction: 1,
@@ -92,7 +92,6 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                               enlargeCenterPage: true,
                             ),
                           ),
-
                           Row(
                             children: [
                               Expanded(
@@ -187,28 +186,6 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                                 .titleMedium!
                                 .copyWith(fontSize: 20),
                           ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Row(
-                          //       children: [
-                          //         const Icon(
-                          //           Icons.star,
-                          //           size: 25,
-                          //           color: Color.fromARGB(255, 230, 207, 5),
-                          //         ),
-                          //         Text(
-                          //           // propertyModel.place,
-                          //           '4.2 (250)',
-                          //           style: Theme.of(context)
-                          //               .textTheme
-                          //               .displaySmall,
-                          //         ),
-                          //       ],
-                          //     ),
-                          //     Text('view on Map')
-                          //   ],
-                          // ),
                           const SizedBox(
                             height: 10,
                           ),
@@ -323,7 +300,8 @@ class RoomDeatailedShowingPage extends StatelessWidget {
                                       snapshot: snapshot));
                               if (snapshot.hasData) {
                                 if (snapshot.data!.docs.isNotEmpty) {
-                                  return BlocBuilder<RatingAndFeedbackBloc, RatingAndFeedbackState>(
+                                  return BlocBuilder<RatingAndFeedbackBloc,
+                                      RatingAndFeedbackState>(
                                     builder: (context, state) {
                                       return Column(
                                         children: [

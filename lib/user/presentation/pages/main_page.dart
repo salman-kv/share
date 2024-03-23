@@ -16,13 +16,14 @@ import 'package:share/user/presentation/pages/user_pages/main_pages/user_message
 import 'package:share/user/presentation/widgets/common_widget.dart';
 import 'package:share/user/presentation/widgets/notification_widget.dart';
 
+// ignore: must_be_immutable
 class MainPage extends StatelessWidget {
   List<Widget> userPages = [
-    UserHome(),
-    UserBookingPage(),
-    UserCurrentPropertyPage(),
-    UserMapPage(),
-    UserMessagePage()
+    const UserHome(),
+    const UserBookingPage(),
+    const UserCurrentPropertyPage(),
+    const UserMapPage(),
+    const UserMessagePage()
   ];
   MainPage({super.key});
 
@@ -64,42 +65,12 @@ class MainPage extends StatelessWidget {
                   ),
                   body: userPages[context.watch<MainUserBloc>().index],
                   drawer: CommonWidget().drawerReturnFunction(context),
-                  // drawer:CommonWidget().drawerReturnFunction(context),
-                  // bottomNavigationBar: MotionTabBar(
-                  //   initialSelectedTab: 'Home',
-                  //   tabBarColor: MediaQuery.of(context).platformBrightness ==
-                  //           Brightness.light
-                  //       ? Colors.white
-                  //       : Colors.black,
-                  //   labels: const ["Home", "Booking", 'Property',"Message"],
-                  //   textStyle: Theme.of(context).textTheme.displaySmall,
-                  //   icons: const [
-                  //     Icons.window_rounded,
-                  //     Icons.calendar_month,
-                  //     Icons.maps_home_work_rounded,
-                  //     Icons.message_rounded,
-
-                  //   ],
-                  //   onTabItemSelected: (value) {
-                  //     BlocProvider.of<MainUserBloc>(context)
-                  //         .add(OnNavBarClickedEvent(index: value));
-                  //   },
-                  //   tabIconColor: MediaQuery.of(context).platformBrightness ==
-                  //           Brightness.light
-                  //       ? Colors.black
-                  //       : Colors.white,
-                  //   tabSelectedColor: MediaQuery.of(context).platformBrightness ==
-                  //           Brightness.light
-                  //       ? Colors.black
-                  //       : Colors.white,
-                  //   tabIconSize: 30,
-                  //   tabIconSelectedColor:
-                  //       MediaQuery.of(context).platformBrightness ==
-                  //               Brightness.light
-                  //           ? const Color.fromARGB(255, 255, 255, 255)
-                  //           : const Color.fromARGB(255, 0, 0, 0),
-                  // ),
                   bottomNavigationBar: FlashyTabBar(
+                    backgroundColor:
+                        MediaQuery.of(context).platformBrightness ==
+                                Brightness.dark
+                            ? const Color.fromARGB(255, 0, 0, 0)
+                            : const Color.fromARGB(255, 255, 255, 255),
                     showElevation: false,
                     height: 55,
                     iconSize: 30,

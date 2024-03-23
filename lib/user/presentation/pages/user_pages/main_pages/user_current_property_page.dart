@@ -40,7 +40,6 @@ class UserCurrentPropertyPage extends StatelessWidget {
                   return ListView(
                     children:
                         List.generate(snapshot.data!.docs.length, (index) {
-                      log('${snapshot.data!.docs[index].data()}');
                       return CurrentRoomWidget().currentEnrolledRoomContainer(
                           context: context,
                           roomBookingModel: RoomBookingModel.fromMap(

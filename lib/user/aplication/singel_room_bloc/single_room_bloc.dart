@@ -1,6 +1,4 @@
-
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/user/aplication/singel_room_bloc/single_room_event.dart';
@@ -18,7 +16,7 @@ class SingleRoomBloc extends Bloc<SingleRoomEvent, SingleRoomState> {
           .collection(FirebaseFirestoreConst.firebaseFireStoreRoomCollection)
           .doc(event.id)
           .get();
-      roomModel=RoomModel.fromMap(instance.data()!, instance.id);
+      roomModel = RoomModel.fromMap(instance.data()!, instance.id);
       emit(SingleRoomSuccessState());
     });
   }

@@ -20,21 +20,15 @@ class HotelShowingPage extends StatelessWidget {
         body: ListView(
           children: [
             BlocConsumer<HotelBloc, HotelState>(
-              listener: (context, state) {
-                // if(state is HotelSuccessState){
-                //   BlocProvider.of<HotelBloc>(context).add(OnHotelRoomDeatialsAddingEvent());
-                // }
-              },
+              listener: (context, state) {},
               builder: (context, state) {
                 if (state is HotelInitialState) {
-                  log('initial state');
                   BlocProvider.of<HotelBloc>(context)
                       .add(OnHotelDeatialsAddingEvent());
                   return Center(
                     child: CommonWidget().loadingWidget(),
                   );
                 } else if (state is HotelLoadingState) {
-                  log('loading state');
                   return Center(
                     child: CommonWidget().loadingWidget(),
                   );
@@ -45,10 +39,8 @@ class HotelShowingPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            // margin: const EdgeInsets.all(10),
+                            width: double.infinity,
                             decoration: BoxDecoration(
-                                // color:
-                                //     ConstColor().mainColorblue.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(20)),
                             child: CarouselSlider(
                                 items: List.generate(
@@ -57,12 +49,22 @@ class HotelShowingPage extends StatelessWidget {
                                         .mainPropertyModel!
                                         .image
                                         .length, (index) {
-                                  return Image.network(context
-                                      .watch<HotelBloc>()
-                                      .mainPropertyModel!
-                                      .image[index]);
+                                  return CommonWidget().shimmerChild(
+                                    context
+                                        .watch<HotelBloc>()
+                                        .mainPropertyModel!
+                                        .image[index],
+                                  );
                                 }),
-                                options: CarouselOptions()),
+                                options: CarouselOptions(
+                                  autoPlay: true,
+                                  autoPlayInterval: const Duration(seconds: 3),
+                                  autoPlayAnimationDuration:
+                                      const Duration(seconds: 2),
+                                  viewportFraction: 1,
+                                  clipBehavior: Clip.antiAlias,
+                                  enlargeCenterPage: true,
+                                )),
                           ),
                           Row(
                             children: [
@@ -84,14 +86,6 @@ class HotelShowingPage extends StatelessWidget {
                                             .textTheme
                                             .titleLarge,
                                       ),
-                                      // IconButton(
-                                      //   icon: const Icon(
-                                      //     Icons.favorite,
-                                      //     size: 30,
-                                      //     color: Colors.red,
-                                      //   ),
-                                      //   onPressed: () {},
-                                      // )
                                     ],
                                   ),
                                 ),
@@ -130,20 +124,17 @@ class HotelShowingPage extends StatelessWidget {
                                 'Rooms : ${context.watch<HotelBloc>().mainPropertyModel!.rooms.length}',
                                 style: Theme.of(context).textTheme.titleMedium),
                           ),
-                          //  context.watch<HotelBloc>().listRoomModel.isEmpty? null: Column()
                           Column(
                             children: List.generate(
-                                    context
-                                        .watch<HotelBloc>()
-                                        .listRoomModel
-                                        .length, (index) {
-                                    return CommonWidget()
-                                        .roomShowingContainerInsideTheHotelPage(
-                                            context: context,
-                                            roomModel: context
-                                                .watch<HotelBloc>()
-                                                .listRoomModel[index]);
-                                  }),
+                                context.watch<HotelBloc>().listRoomModel.length,
+                                (index) {
+                              return CommonWidget()
+                                  .roomShowingContainerInsideTheHotelPage(
+                                      context: context,
+                                      roomModel: context
+                                          .watch<HotelBloc>()
+                                          .listRoomModel[index]);
+                            }),
                           ),
                         ],
                       ));

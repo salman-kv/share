@@ -11,6 +11,7 @@ import 'package:share/user/domain/model/room_booking_model.dart';
 import 'package:share/user/presentation/const/const_color.dart';
 import 'package:share/user/presentation/pages/user_pages/booking_deatails/booking_deatails_page.dart';
 import 'package:share/user/presentation/pages/user_pages/rating_feedback/rating_and_feedback.dart';
+import 'package:share/user/presentation/widgets/common_widget.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 
 class CurrentRoomWidget {
@@ -39,11 +40,14 @@ class CurrentRoomWidget {
                       Container(
                         margin: const EdgeInsets.only(top: 5, bottom: 5),
                         height: 200,
+                        width: double.infinity,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
                             image: DecorationImage(
                                 image: NetworkImage(roomBookingModel.image),
                                 fit: BoxFit.fill)),
+                        child:
+                            CommonWidget().shimmerChild(roomBookingModel.image),
                       ),
                       Text(
                         snapshot.data!.data()![
@@ -142,9 +146,13 @@ class CurrentRoomWidget {
                       // ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                            return RatingAndFeedback(roomBookingModel: roomBookingModel,);
-                          },));
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return RatingAndFeedback(
+                                roomBookingModel: roomBookingModel,
+                              );
+                            },
+                          ));
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -218,13 +226,16 @@ class CurrentRoomWidget {
                                                     roomBookingModel),
                                           );
                                         },
-                                        child:state is RoomBookingLoadingState ? const CircularProgressIndicator() : Text(
-                                          'Check Out Now',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall!
-                                              .copyWith(color: Colors.white),
-                                        ),
+                                        child: state is RoomBookingLoadingState
+                                            ? const CircularProgressIndicator()
+                                            : Text(
+                                                'Check Out Now',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall!
+                                                    .copyWith(
+                                                        color: Colors.white),
+                                              ),
                                       ),
                                     ),
                             ),

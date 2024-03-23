@@ -167,19 +167,37 @@ class CommonWidget {
                             const BorderRadius.all(Radius.circular(100)),
                         color: BlocProvider.of<SearchBloc>(context).list[index]
                                 ['select']
-                            ? Colors.black
+                            ? MediaQuery.of(context).platformBrightness ==
+                                    Brightness.dark
+                                ? Colors.white
+                                : Colors.black
                             : ConstColor().mainColorblue.withOpacity(0.3),
                       ),
                       child: Center(
-                          child: Text(
-                        BlocProvider.of<SearchBloc>(context).list[index]
-                            ['name'],
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            color: BlocProvider.of<SearchBloc>(context)
-                                    .list[index]['select']
-                                ? const Color.fromARGB(255, 255, 255, 255)
-                                : Colors.black),
-                      )),
+                        child: Text(
+                          BlocProvider.of<SearchBloc>(context).list[index]
+                              ['name'],
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(
+                                color: BlocProvider.of<SearchBloc>(context)
+                                        .list[index]['select']
+                                    ? MediaQuery.of(context)
+                                                .platformBrightness ==
+                                            Brightness.dark
+                                        ? const Color.fromARGB(255, 0, 0, 0)
+                                        : const Color.fromARGB(
+                                            255, 255, 255, 255)
+                                    : MediaQuery.of(context)
+                                                .platformBrightness ==
+                                            Brightness.dark
+                                        ? const Color.fromARGB(
+                                            255, 255, 255, 255)
+                                        : const Color.fromARGB(255, 0, 0, 0),
+                              ),
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -212,10 +230,12 @@ class CommonWidget {
           children: [
             Text(
               'Sort',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall!
-                  .copyWith(color: Colors.black),
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    color: MediaQuery.of(context).platformBrightness ==
+                            Brightness.dark
+                        ? const Color.fromARGB(255, 255, 255, 255)
+                        : const Color.fromARGB(255, 0, 0, 0),
+                  ),
             ),
             const SizedBox(
               width: 5,
@@ -258,10 +278,12 @@ class CommonWidget {
           children: [
             Text(
               'Filter',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall!
-                  .copyWith(color: Colors.black),
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                    color: MediaQuery.of(context).platformBrightness ==
+                            Brightness.dark
+                        ? const Color.fromARGB(255, 255, 255, 255)
+                        : const Color.fromARGB(255, 0, 0, 0),
+                  ),
             ),
             const SizedBox(
               width: 5,
@@ -280,7 +302,6 @@ class CommonWidget {
 
   roomShowingContainer(
       {required BuildContext context, required RoomModel roomModel}) {
-    // List<dynamic> tempImages = [];
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
         return RoomDeatailedShowingPage(
@@ -300,29 +321,15 @@ class CommonWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                    height: 200,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.network(
-                        (roomModel.images[0]),
-                        fit: BoxFit.fill,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return Shimmer.fromColors(
-                            baseColor: const Color.fromARGB(255, 230, 230, 230),
-                            highlightColor:
-                                const Color.fromARGB(255, 200, 200, 200),
-                            child: const ColoredBox(color: Colors.grey),
-                          );
-                        },
-                      ),
-                    )),
+                      child: shimmerChild(roomModel.images[0])),
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -451,6 +458,27 @@ class CommonWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // shimmer image child
+  shimmerChild(String image) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15),
+      child: Image.network(
+        (image),
+        fit: BoxFit.fill,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) {
+            return child;
+          }
+          return Shimmer.fromColors(
+            baseColor: const Color.fromARGB(255, 230, 230, 230),
+            highlightColor: const Color.fromARGB(255, 200, 200, 200),
+            child: const ColoredBox(color: Colors.grey),
+          );
+        },
       ),
     );
   }
@@ -585,7 +613,7 @@ class CommonWidget {
       onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
         return BlocProvider(
           create: (context) => HotelBloc(hotelId: mainPropertyModel.id!),
-          child: HotelShowingPage(),
+          child: const HotelShowingPage(),
         );
       })),
       child: Column(
@@ -605,11 +633,14 @@ class CommonWidget {
                   children: [
                     Container(
                       height: 200,
+                      width: double.infinity,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
                           image: DecorationImage(
                               image: NetworkImage(mainPropertyModel.image[0]),
                               fit: BoxFit.cover)),
+                      child: CommonWidget()
+                          .shimmerChild(mainPropertyModel.image[0]),
                     ),
                     Row(
                       children: [
@@ -625,14 +656,6 @@ class CommonWidget {
                                   mainPropertyModel.propertyNmae,
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),
-                                // IconButton(
-                                //   icon: const Icon(
-                                //     Icons.favorite,
-                                //     size: 30,
-                                //     color: Colors.red,
-                                //   ),
-                                //   onPressed: () {},
-                                // )
                               ],
                             ),
                           ),
@@ -706,6 +729,7 @@ class CommonWidget {
                           roomModel.images[0],
                         ),
                         fit: BoxFit.cover)),
+                child: CommonWidget().shimmerChild(roomModel.images[0]),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),

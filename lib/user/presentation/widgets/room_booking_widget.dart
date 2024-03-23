@@ -25,6 +25,7 @@ import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/const/const_color.dart';
 import 'package:share/user/presentation/pages/payment_page/payment_page.dart';
 import 'package:share/user/presentation/pages/user_pages/booking_deatails/booking_deatails_page.dart';
+import 'package:share/user/presentation/widgets/common_widget.dart';
 import 'package:share/user/presentation/widgets/styles.dart';
 
 class RoomBookingWidget {
@@ -169,7 +170,7 @@ class RoomBookingWidget {
   // total payment container
   totalpaymentContainer({required BuildContext context, required int price}) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(
         horizontal: 10,
       ),
@@ -184,7 +185,8 @@ class RoomBookingWidget {
           Text('Total Amount', style: Theme.of(context).textTheme.titleMedium),
           context.watch<RoomBookingBloc>().startingDate == null
               ? Text(
-                  '${BlocProvider.of<SingleRoomBloc>(context).roomModel!.price}')
+                  '₹ ${BlocProvider.of<SingleRoomBloc>(context).roomModel!.price}',
+                  style: Theme.of(context).textTheme.titleLarge)
               : Text(
                   '₹ ${context.watch<RoomBookingBloc>().endingDate!.difference(BlocProvider.of<RoomBookingBloc>(context).startingDate!).inDays * price}',
                   style: Theme.of(context).textTheme.titleLarge)
@@ -488,18 +490,9 @@ class RoomBookingWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            height: MediaQuery.of(context).size.width * 0.3,
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(20)),
-                                image: DecorationImage(
-                                    image: NetworkImage(roomBookingModel.image),
-                                    fit: BoxFit.fill)),
-                          ),
-                        ),
+                            padding: const EdgeInsets.all(8.0),
+                            child: CommonWidget()
+                                .shimmerChild(roomBookingModel.image)),
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -742,6 +735,8 @@ class RoomBookingWidget {
                                 image: DecorationImage(
                                     image: NetworkImage(roomBookingModel.image),
                                     fit: BoxFit.fill)),
+                            child: CommonWidget()
+                                .shimmerChild(roomBookingModel.image),
                           ),
                         ),
                         Expanded(

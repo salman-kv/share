@@ -7,7 +7,6 @@ import 'package:lottie/lottie.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_event.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_state.dart';
-import 'package:share/user/domain/functions/user_firestroe_funciton.dart';
 import 'package:share/user/presentation/pages/main_page.dart';
 import 'package:share/user/presentation/pages/userLogin/user_login_page.dart';
 import 'package:share/user/presentation/pages/welcomeUser/user_welcome_user.dart';
@@ -15,7 +14,6 @@ import 'package:share/user/presentation/pages/welcomeUser/user_welcome_user.dart
 class SplashScreen extends StatelessWidget {
   final String? userId;
   const SplashScreen({required this.userId, super.key});
-  // home:  loginStatus == '' ? UserLogin() : loginStatus != null? UserHome() : const WelcomeUser() ,
 
   @override
   Widget build(BuildContext context) {

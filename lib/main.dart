@@ -1,5 +1,4 @@
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +12,6 @@ import 'package:share/user/aplication/room_bookin_bloc/room_booking_bloc.dart';
 import 'package:share/user/aplication/search_bloc/search_bloc.dart';
 import 'package:share/user/aplication/user_login_bloc/user_login_bloc.dart';
 import 'package:share/user/aplication/user_signup_bloc/user_signup_bloc.dart';
-import 'package:share/user/domain/functions/connectivity_function.dart';
 import 'package:share/user/domain/functions/shared_prefrence.dart';
 import 'package:share/user/presentation/const/const_color.dart';
 
@@ -82,7 +80,6 @@ class MainApp extends StatelessWidget {
             theme: UserTheme().lightTheme,
             darkTheme: UserTheme().darkTheme,
             debugShowCheckedModeBanner: false,
-            // home:  loginStatus == '' ? UserLogin() : loginStatus != null? UserHome() : const WelcomeUser() ,
             home: SplashScreen(userId: loginStatus),
           );
         },

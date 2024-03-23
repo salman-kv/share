@@ -8,7 +8,6 @@ import 'package:share/user/aplication/map_bloc/map_state.dart';
 import 'package:share/user/domain/const/firebasefirestore_constvalue.dart';
 import 'package:share/user/domain/functions/user_firestroe_funciton.dart';
 import 'package:share/user/domain/model/main_property_model.dart';
-import 'package:share/user/presentation/alerts/snack_bars.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
@@ -54,7 +53,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         );
       }
       marker.add(Marker(
-          markerId: MarkerId('Current Location'), position: userPosition!));
+          markerId:const MarkerId('Current Location'), position: userPosition!));
       log('everithing is okey');
       emit(MapSuccessState());
     });

@@ -8,7 +8,7 @@ import 'package:share/user/aplication/map_bloc/map_state.dart';
 import 'package:share/user/presentation/widgets/common_widget.dart';
 
 class UserMapPage extends StatelessWidget {
-  UserMapPage({super.key});
+  const UserMapPage({super.key});
 
   @override
   Widget build(BuildContext context) {

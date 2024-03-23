@@ -930,10 +930,7 @@ class CommonWidget {
   // drawer function
   drawerReturnFunction(BuildContext context) {
     return Drawer(
-      backgroundColor:
-          MediaQuery.of(context).platformBrightness == Brightness.dark
-              ? const Color.fromARGB(150, 255, 255, 255)
-              : const Color.fromARGB(150, 0, 0, 0),
+      backgroundColor: const Color.fromARGB(150, 0, 0, 0),
       child: BlocBuilder<UserLoginBloc, UserLoginState>(
         builder: (context, state) {
           return Column(
@@ -992,7 +989,10 @@ class CommonWidget {
                             ),
                             Text(
                               'Profile',
-                              style: Theme.of(context).textTheme.labelMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(color: Colors.white),
                             ),
                           ],
                         ),
@@ -1002,7 +1002,7 @@ class CommonWidget {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) {
-                            return FavoritePage();
+                            return const FavoritePage();
                           },
                         ));
                       },
@@ -1021,7 +1021,10 @@ class CommonWidget {
                             ),
                             Text(
                               'Favorite',
-                              style: Theme.of(context).textTheme.labelMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(color: Colors.white),
                             ),
                           ],
                         ),
@@ -1050,7 +1053,10 @@ class CommonWidget {
                             ),
                             Text(
                               'History',
-                              style: Theme.of(context).textTheme.labelMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(color: Colors.white),
                             ),
                           ],
                         ),
@@ -1075,7 +1081,10 @@ class CommonWidget {
                             ),
                             Text(
                               'About us',
-                              style: Theme.of(context).textTheme.labelMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(color: Colors.white),
                             ),
                           ],
                         ),
@@ -1104,7 +1113,10 @@ class CommonWidget {
                             ),
                             Text(
                               'Privacy policy',
-                              style: Theme.of(context).textTheme.labelMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(color: Colors.white),
                             ),
                           ],
                         ),
@@ -1133,7 +1145,10 @@ class CommonWidget {
                             ),
                             Text(
                               'Terms & Condition',
-                              style: Theme.of(context).textTheme.labelMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(color: Colors.white),
                             ),
                           ],
                         ),
